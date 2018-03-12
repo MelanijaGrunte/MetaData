@@ -16,6 +16,7 @@ class RestoreDefaultSettings: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
     confirmationLabel.numberOfLines = 0
     restoreDefaultSettingsPopUp.layer.cornerRadius = 10
     restoreDefaultSettingsPopUp.layer.masksToBounds = true
@@ -27,6 +28,7 @@ class RestoreDefaultSettings: UIViewController {
 
     @IBAction func restoreSettings(_ sender: Any) {
         // formatStringRenamingSwitchOutlet.setOn(false, animated: true)
+
         dismiss(animated: true, completion: nil)
     }
 }

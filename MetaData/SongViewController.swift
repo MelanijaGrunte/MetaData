@@ -24,6 +24,8 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var albumText: UITextField!
     @IBOutlet weak var trackLabel: UILabel!
     @IBOutlet weak var trackText: UITextField!
+    @IBOutlet weak var discnumberLabel: UILabel!
+    @IBOutlet weak var discnumberText: UITextField!
     @IBOutlet weak var yearLabel: UILabel!
     @IBOutlet weak var yearText: UITextField!
     @IBOutlet weak var genreLabel: UILabel!
@@ -43,11 +45,14 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        noPhotoSelectedImage.image = UIImage(named: "defaultnophotoselected")
+
         filenameText.delegate = self
         titleText.delegate = self
         artistText.delegate = self
         albumText.delegate = self
         trackText.delegate = self
+        discnumberText.delegate = self
         yearText.delegate = self
         genreText.delegate = self
         composerText.delegate = self
@@ -62,6 +67,9 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
             if let track = song.track.value {
                 trackText.text = String(describing: track)
             }
+            if let discnumber = song.discnumber.value {
+                discnumberText.text = String(describing: discnumber)
+            }
             if let year = song.year.value {
                 yearText.text = String(describing: year)
             }
@@ -72,7 +80,6 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
                 albumArtImage.image = UIImage(data: image) ?? nil}
             albumArtistText.text = song.albumArtist ?? nil
         }
-        noPhotoSelectedImage.image = UIImage(named: "defaultnophotoselected")
     }
 
     //MARK: UITextFieldDelegate
@@ -106,6 +113,22 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
+        let realm = try! Realm()
+        try! realm.write {
+            self.song!.filename = filenameText.text ?? ""
+            self.song!.title = titleText.text ?? nil
+            self.song!.artist = artistText.text ?? nil
+            self.song!.album = albumText.text ?? nil
+            self.song!.track.value = optionalStringToInt(string: trackText.text) ?? nil
+            self.song!.discnumber.value = optionalStringToInt(string: discnumberText.text) ?? nil
+            self.song!.year.value = optionalStringToInt(string: yearText.text) ?? nil
+            self.song!.genre = genreText.text ?? nil
+            self.song!.composer = composerText.text ?? nil
+            self.song!.comment = commentText.text ?? nil
+            if albumArtImage.image != nil && albumArtImage.image != UIImage(named: "defaultnophotoselected") {
+                self.song!.albumArtImage = NSData(data: UIImagePNGRepresentation(albumArtImage.image!)!) as Data?  }       // probleema !!!
+            self.song!.albumArtist = albumArtistText.text ?? nil } // probleema ka ja nekaa nav tad saglabaajas kaa tuksh un nestraadaa unknown artist
+
         if song?.albumArtImage != nil && segue.identifier == "bigImage"{
             if let pageDestination = segue.destination as? AlbumArt {
                 pageDestination.image = albumArtImage.image }
@@ -117,21 +140,6 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         guard let button = sender as? UIBarButtonItem, button === saveButton else {
             os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
             return }
-
-        let realm = try! Realm()
-        try! realm.write {
-            self.song!.filename = filenameText.text ?? ""
-            self.song!.title = titleText.text ?? nil
-            self.song!.artist = artistText.text ?? nil
-            self.song!.album = albumText.text ?? nil
-            self.song!.track.value = optionalStringToInt(string: trackText.text) ?? nil
-            self.song!.year.value = optionalStringToInt(string: yearText.text) ?? nil
-            self.song!.genre = genreText.text ?? nil
-            self.song!.composer = composerText.text ?? nil
-            self.song!.comment = commentText.text ?? nil
-            if albumArtImage.image != nil {
-                self.song!.albumArtImage = NSData(data: UIImagePNGRepresentation(albumArtImage.image!)!) as Data?  }       // probleema !!!
-            self.song!.albumArtist = albumArtistText.text ?? nil } // probleema ka ja nekaa nav tad saglabaajas kaa tuksh un nestraadaa unknown artist
         
     }
 
@@ -147,7 +155,9 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBAction func removeAlbumArtButton(_ sender: UIButton) {
         let realm = try! Realm()
         try! realm.write() {
-            albumArtImage.image = nil }
+            albumArtImage.image = nil
+            song!.albumArtImage = nil           // slikts risinaajums, jo ja spiezh cancel, tad tik un taa dziesmas bilde jau ir izdzeesta
+        }
     }
 }
 
@@ -157,5 +167,3 @@ func optionalStringToInt(string: String?) -> Int? {
     }
     return nil
 }
-
-

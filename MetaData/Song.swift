@@ -15,6 +15,7 @@ class Song: Object {
     @objc dynamic var artist: String?
     @objc dynamic var album: String?
     var track = RealmOptional<Int>()       // !!!
+    var discnumber = RealmOptional<Int>()       // !!!
     var year = RealmOptional<Int>()       // !!!
     @objc dynamic var genre: String?
     @objc dynamic var composer: String?
@@ -22,7 +23,7 @@ class Song: Object {
     @objc dynamic var albumArtImage: Data?
     @objc dynamic var albumArtist: String?
     let songs = List<Song>()
-
+    
     var titleDescription: String {
         if title == "" {
             return "unknown title" }
@@ -46,6 +47,42 @@ class Song: Object {
             return String(describing: track)
         } else {
             return "unknown track" }          // !!!
+    }
+    var discnumberDescription: String {
+        if let discnumber = discnumber.value {
+            return String(describing: discnumber)
+        } else {
+            return "unknown discnumber" }
+    }
+    var yearDescription: String {
+        if let year = year.value {
+            return String(describing: year)
+        } else {
+            return "unknown year" }
+    }
+    var genreDescription: String {
+        if genre == "" {
+            return "unknown genre" }
+        else {
+            return genre ?? "unknown genre" }
+    }
+    var composerDescription: String {
+        if composer == "" {
+            return "unknown composer" }
+        else {
+            return composer ?? "unknown composer" }
+    }
+    var commentDescription: String {
+        if comment == "" {
+            return "unknown comment" }
+        else {
+            return comment ?? "unknown comment" }
+    }
+    var albumArtistDescription: String {
+        if albumArtist == "" {
+            return "unknown album artist" }
+        else {
+            return albumArtist ?? "unknown album artist" }
     }
 }
 

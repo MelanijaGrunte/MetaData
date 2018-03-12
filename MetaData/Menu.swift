@@ -19,6 +19,10 @@ class Menu: UIViewController {
 //        self.view.insertSubview(backgroundImage, at: 0)
     }
 
+//    override var preferredStatusBarStyle: UIStatusBarStyle {
+//        return .lightContent
+//    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         navigationController?.setNavigationBarHidden(true, animated: true)

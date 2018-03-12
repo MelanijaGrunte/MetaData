@@ -11,8 +11,11 @@ import UIKit
 
 class Settings: UITableViewController {
 
+
     @IBOutlet weak var selectFormatStringCell: UITableViewCell!
     @IBOutlet weak var selectFormatStringButton: UIButton!
+    @IBOutlet weak var configureFormatStyleCell: UITableViewCell!
+    @IBOutlet weak var configureFormatStyleButton: UIButton!
     @IBOutlet weak var formatStringRenamingSwitchOutlet: UISwitch!
 
     var switchState = false
@@ -21,9 +24,13 @@ class Settings: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
+
         formatStringRenamingSwitchOutlet.isOn =  UserDefaults.standard.bool(forKey: "switchState")
         formatStringRenamingSwitch(formatStringRenamingSwitchOutlet)
     }
+
+    
 
     @IBAction func formatStringRenamingSwitch(_ sender: UISwitch) {
         if (sender.isOn == true) {
@@ -31,12 +38,22 @@ class Settings: UITableViewController {
             selectFormatStringButton.setTitleColor(.black, for: .normal)
             selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.none
             selectFormatStringCell.isUserInteractionEnabled = true
+
+            configureFormatStyleCell.backgroundColor = UIColor.white
+            configureFormatStyleButton.setTitleColor(.black, for: .normal)
+            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.none
+            configureFormatStyleCell.isUserInteractionEnabled = true
         }
         if (sender.isOn == false) {
-            selectFormatStringCell.backgroundColor = UIColor(white: 0.8, alpha: 1)
-            selectFormatStringButton.setTitleColor(UIColor(white: 0.5, alpha:1), for: .normal)
+//            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
             selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
             selectFormatStringCell.isUserInteractionEnabled = false
+
+//            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+            configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
+            configureFormatStyleCell.isUserInteractionEnabled = false
         }
         UserDefaults.standard.set(sender.isOn, forKey: "switchState")
     }
@@ -49,6 +66,11 @@ class Settings: UITableViewController {
             try! realm.write {
                 realm.add(songs)
             }
+        }
+    }
+
+    @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? ReplaceStrings {
         }
     }
 
@@ -118,7 +140,7 @@ class Settings: UITableViewController {
 
         let realm = try! Realm()
         try! realm.write() {
-            let song1 = realm.create(Song.self, value: ["jandek down in a mirror", "Down in a mirror", "Jandek", "Chair Beside a Window", 01, 1982, "blues; lo-fi; folk; experimental", "Jandek", nil, albumArt1, nil])
+            let song1 = realm.create(Song.self, value: ["jandek down in a mirror", "Down in a mirror", "Jandek", "Chair Beside a Window", 01, nil,  1982, "blues; lo-fi; folk; experimental", "Jandek", nil, albumArt1, nil])
             song1.track.value = 01
             song1.year.value = 1982
         }
@@ -143,6 +165,7 @@ class Settings: UITableViewController {
         song2.artist = "CHOMSKY CHESS CLUB"
         song2.album = "CHINA"
         song2.track.value = 3
+        song2.discnumber.value = nil
         song2.year.value = 2015
         song2.genre = nil
         song2.composer = nil
@@ -156,6 +179,7 @@ class Settings: UITableViewController {
         song3.artist = "mac demarco"
         song3.album = "this old dog"
         song3.track.value = nil
+        song3.discnumber.value = nil
         song3.year.value = nil
         song3.genre = nil
         song3.composer = nil
@@ -169,6 +193,7 @@ class Settings: UITableViewController {
         song4.artist = "Matt Elliott"
         song4.album = "Drinking Songs"
         song4.track.value = 1
+        song4.discnumber.value = nil
         song4.year.value = 2004
         song4.genre = "neofolk; electronic; dance music; slowcore"
         song4.composer = "Matt Elliott"
@@ -182,6 +207,7 @@ class Settings: UITableViewController {
         song5.artist = "Matt Elliott"
         song5.album = "Drinking Songs"
         song5.track.value = 5
+        song5.discnumber.value = nil
         song5.year.value = 2004
         song5.genre = "neofolk; electronic; dance music; slowcore"
         song5.composer = "Matt Elliott"
@@ -196,6 +222,7 @@ class Settings: UITableViewController {
         song6.artist = "METZ"
         song6.album = "II"
         song6.track.value = 01
+        song6.discnumber.value = nil
         song6.year.value = 2015
         song6.genre = "noise rock"
         song6.composer = nil
@@ -209,6 +236,7 @@ class Settings: UITableViewController {
         song7.artist = "Ratatat"
         song7.album = "LP3"
         song7.track.value = nil
+        song7.discnumber.value = nil
         song7.year.value = nil
         song7.genre = "experimental rock; electronic rock; neo-psychedelia; electronica"
         song7.composer = nil
@@ -222,6 +250,7 @@ class Settings: UITableViewController {
         song8.artist = "Ty Segall"
         song8.album = nil
         song8.track.value = nil
+        song8.discnumber.value = nil
         song8.year.value = nil
         song8.genre = nil
         song8.composer = nil
@@ -235,6 +264,7 @@ class Settings: UITableViewController {
         song9.artist = "Matt Elliott"
         song9.album = "Howling Songs"
         song9.track.value = 6
+        song9.discnumber.value = nil
         song9.year.value = nil
         song9.genre = "Pop"
         song9.composer = nil
@@ -248,6 +278,7 @@ class Settings: UITableViewController {
         song10.artist = "Michael Hurley"
         song10.album = "Armchair Boogie"
         song10.track.value = 05
+        song10.discnumber.value = nil
         song10.year.value = 1971
         song10.genre = nil
         song10.composer = "Mae West & Duke Ellington"
@@ -261,6 +292,7 @@ class Settings: UITableViewController {
         song11.artist = nil
         song11.album = nil
         song11.track.value = nil
+        song11.discnumber.value = nil
         song11.year.value = nil
         song11.genre = nil
         song11.composer = nil
@@ -274,6 +306,7 @@ class Settings: UITableViewController {
         song12.artist = nil
         song12.album = nil
         song12.track.value = nil
+        song12.discnumber.value = nil
         song12.year.value = nil
         song12.genre = nil
         song12.composer = nil
@@ -287,6 +320,7 @@ class Settings: UITableViewController {
         song13.artist = "(Sandy) Alex G"
         song13.album = nil
         song13.track.value = nil
+        song13.discnumber.value = nil
         song13.year.value = nil
         song13.genre = nil
         song13.composer = nil
@@ -300,6 +334,7 @@ class Settings: UITableViewController {
         song14.artist = "coil"
         song14.album = "musick to play in the dark, volume 2"
         song14.track.value = nil
+        song14.discnumber.value = nil
         song14.year.value = nil
         song14.genre = "industrial; experimental; electronic; avant-garde; noise; psychedelia; avant-pop"
         song14.composer = nil
@@ -313,6 +348,7 @@ class Settings: UITableViewController {
         song15.artist = "coil"
         song15.album = "musick to play in the dark, volume 2"
         song15.track.value = nil
+        song15.discnumber.value = nil
         song15.year.value = nil
         song15.genre = "industrial; experimental; electronic; avant-garde; noise; psychedelia; avant-pop"
         song15.composer = nil
@@ -326,6 +362,7 @@ class Settings: UITableViewController {
         song16.artist = "Tzusing"
         song16.album = "東方不敗"
         song16.track.value = 01
+        song16.discnumber.value = nil
         song16.year.value = 2017
         song16.genre = "techno; electronic; ebm; industrial; taiwan"
         song16.composer = nil
@@ -339,6 +376,7 @@ class Settings: UITableViewController {
         song17.artist = "The I.L.Y's"
         song17.album = "I've Always Been Good at True Love"
         song17.track.value = nil
+        song17.discnumber.value = nil
         song17.year.value = nil
         song17.genre = nil
         song17.composer = nil
@@ -352,6 +390,7 @@ class Settings: UITableViewController {
         song18.artist = "Mazie Smirdīgie Kociņi"
         song18.album = "Putni ir lohi"
         song18.track.value = nil
+        song18.discnumber.value = nil
         song18.year.value = nil
         song18.genre = nil
         song18.composer = nil
@@ -365,6 +404,7 @@ class Settings: UITableViewController {
         song19.artist = "Cyclobe"
         song19.album = nil
         song19.track.value = nil
+        song19.discnumber.value = nil
         song19.year.value = nil
         song19.genre = nil
         song19.composer = nil
@@ -378,6 +418,7 @@ class Settings: UITableViewController {
         song20.artist = "Show Me the Body ft. Dreamcrusher"
         song20.album = "Corpus I"
         song20.track.value = nil
+        song20.discnumber.value = nil
         song20.year.value = nil
         song20.genre = nil
         song20.composer = nil
@@ -391,6 +432,7 @@ class Settings: UITableViewController {
         song21.artist = "Księżyc"
         song21.album = "Historyjka"
         song21.track.value = nil
+        song21.discnumber.value = nil
         song21.year.value = 1996
         song21.genre = "neofolk; experiental; avant-garde; polish; ambient; folk"
         song21.composer = nil
@@ -404,6 +446,7 @@ class Settings: UITableViewController {
         song22.artist = "sonic youth"
         song22.album = "confusion is sex"
         song22.track.value = nil
+        song22.discnumber.value = nil
         song22.year.value = nil
         song22.genre = nil
         song22.composer = nil
@@ -417,6 +460,7 @@ class Settings: UITableViewController {
         song23.artist = "Vince Staples"
         song23.album = "Big Fish Theory"
         song23.track.value = nil
+        song23.discnumber.value = nil
         song23.year.value = nil
         song23.genre = nil
         song23.composer = nil
@@ -430,6 +474,7 @@ class Settings: UITableViewController {
         song24.artist = nil
         song24.album = "volume 1: flick your tongue against your teeth and describe the present."
         song24.track.value = nil
+        song24.discnumber.value = nil
         song24.year.value = nil
         song24.genre = nil
         song24.composer = nil
@@ -443,6 +488,7 @@ class Settings: UITableViewController {
         song25.artist = "Moor Mother"
         song25.album = "Fetish Bones"
         song25.track.value = nil
+        song25.discnumber.value = nil
         song25.year.value = nil
         song25.genre = nil
         song25.composer = nil
@@ -456,6 +502,7 @@ class Settings: UITableViewController {
         song26.artist = "tesa"
         song26.album = "G H O S T"
         song26.track.value = 4
+        song26.discnumber.value = nil
         song26.year.value = 2015
         song26.genre = nil
         song26.composer = nil
@@ -469,6 +516,7 @@ class Settings: UITableViewController {
         song27.artist = "Oytö"
         song27.album = nil
         song27.track.value = nil
+        song27.discnumber.value = nil
         song27.year.value = nil
         song27.genre = nil
         song27.composer = nil
@@ -482,6 +530,7 @@ class Settings: UITableViewController {
         song28.artist = "the buttress"
         song28.album = "behind every great man"
         song28.track.value = nil
+        song28.discnumber.value = nil
         song28.year.value = nil
         song28.genre = nil
         song28.composer = nil
@@ -495,6 +544,7 @@ class Settings: UITableViewController {
         song29.artist = "Gatis Ziema un Karaliskā Dekadence"
         song29.album = "Pēdējā Derība"
         song29.track.value = 3
+        song29.discnumber.value = nil
         song29.year.value = 2016
         song29.genre = nil
         song29.composer = nil
@@ -508,6 +558,7 @@ class Settings: UITableViewController {
         song30.artist = "emptyset"
         song30.album = "demiurge"
         song30.track.value = nil
+        song30.discnumber.value = nil
         song30.year.value = nil
         song30.genre = nil
         song30.composer = nil
@@ -521,6 +572,7 @@ class Settings: UITableViewController {
         song31.artist = "Jak Tripper/JakProgresso"
         song31.album = "Hideous"
         song31.track.value = 13
+        song31.discnumber.value = nil
         song31.year.value = 2016
         song31.genre = nil
         song31.composer = nil
@@ -534,6 +586,7 @@ class Settings: UITableViewController {
         song32.artist = "Sum Of R"
         song32.album = "Lights on Water"
         song32.track.value = 1
+        song32.discnumber.value = nil
         song32.year.value = 2013
         song32.genre = "dark ambient; ambient; drone; swiss; experimental; drone doom"
         song32.composer = nil
@@ -547,6 +600,7 @@ class Settings: UITableViewController {
         song33.artist = "Not Waving"
         song33.album = "Animals"
         song33.track.value = 12
+        song33.discnumber.value = nil
         song33.year.value = 2016
         song33.genre = "electronic; superhighway; ambient; electronic"
         song33.composer = nil
@@ -560,6 +614,7 @@ class Settings: UITableViewController {
         song34.artist = "SNHK"
         song34.album = "Who Killed John Todd?"
         song34.track.value = 2
+        song34.discnumber.value = nil
         song34.year.value = 2014
         song34.genre = "electronic; experimental; grindcore; hip-hop"
         song34.composer = nil
@@ -573,6 +628,7 @@ class Settings: UITableViewController {
         song35.artist = "mona de bo"
         song35.album = "Nekavējies, šīs ir spēles ar tevi"
         song35.track.value = 2
+        song35.discnumber.value = nil
         song35.year.value = 2010
         song35.genre = "drone; psychedelic; latvian; experimental; slowcore"
         song35.composer = nil
@@ -586,6 +642,7 @@ class Settings: UITableViewController {
         song36.artist = "Death Grips"
         song36.album = "Exmilitary"
         song36.track.value = 02
+        song36.discnumber.value = nil
         song36.year.value = 2011
         song36.genre = "hip-hop; experimental; experimental hip-hop; industrial hip-hop; rap"
         song36.composer = nil
@@ -599,6 +656,7 @@ class Settings: UITableViewController {
         song37.artist = "Daniel Johnston"
         song37.album = "1990"
         song37.track.value = 01
+        song37.discnumber.value = nil
         song37.year.value = 1990
         song37.genre = "indie; folk; green; singer-songwriter; lo-fi"
         song37.composer = nil
@@ -612,6 +670,7 @@ class Settings: UITableViewController {
         song38.artist = "The Microphones"
         song38.album = "The Glow Pt. 2"
         song38.track.value = 01
+        song38.discnumber.value = nil
         song38.year.value = 2001
         song38.genre = "indie; folk; green; singer-songwriter; lo-fi"
         song38.composer = nil
@@ -625,6 +684,7 @@ class Settings: UITableViewController {
         song39.artist = "Lāns"
         song39.album = "Sviests V"
         song39.track.value = 14
+        song39.discnumber.value = nil
         song39.year.value = 2015
         song39.genre = "folk; latvian"
         song39.composer = nil
@@ -638,6 +698,7 @@ class Settings: UITableViewController {
         song40.artist = "Wardruna"
         song40.album = "Yggdrasil"
         song40.track.value = 05
+        song40.discnumber.value = nil
         song40.year.value = 2013
         song40.genre = "folk; nordic folk; norwegian; pagan folk; neofolk"
         song40.composer = nil
@@ -651,6 +712,7 @@ class Settings: UITableViewController {
         song41.artist = "Kill Alters"
         song41.album = "Kill Alters"
         song41.track.value = 07
+        song41.discnumber.value = nil
         song41.year.value = 2013
         song41.genre = "folk; nordic folk; norwegian; pagan folk; neofolk"
         song41.composer = nil
@@ -664,6 +726,7 @@ class Settings: UITableViewController {
         song42.artist = "Kill Alters"
         song42.album = "No Self Helps"
         song42.track.value = 04
+        song42.discnumber.value = nil
         song42.year.value = 2016
         song42.genre = "alternative; electronic; rock; psychedelic"
         song42.composer = nil
@@ -677,6 +740,7 @@ class Settings: UITableViewController {
         song43.artist = "dean blunt"
         song43.album = "the redeemer"
         song43.track.value = 15
+        song43.discnumber.value = nil
         song43.year.value = 2013
         song43.genre = "experimental electronic"
         song43.composer = nil
@@ -690,6 +754,7 @@ class Settings: UITableViewController {
         song44.artist = "girl band"
         song44.album = "holding hands with jamie"
         song44.track.value = 2
+        song44.discnumber.value = nil
         song44.year.value = 2015
         song44.genre = "post punk; noise rock; irish"
         song44.composer = nil
@@ -703,6 +768,7 @@ class Settings: UITableViewController {
         song45.artist = "ansamblis manta"
         song45.album = "karaliene anna"
         song45.track.value = 8
+        song45.discnumber.value = nil
         song45.year.value = 2017
         song45.genre = "latvian"
         song45.composer = nil
@@ -716,6 +782,7 @@ class Settings: UITableViewController {
         song46.artist = "PHARMAKON"
         song46.album = "CONTACT"
         song46.track.value = 6
+        song46.discnumber.value = nil
         song46.year.value = 2017
         song46.genre = "experimental; noise; death metal"
         song46.composer = nil
@@ -729,6 +796,7 @@ class Settings: UITableViewController {
         song47.artist = "elliott smith"
         song47.album = "figure 8"
         song47.track.value = 16
+        song47.discnumber.value = nil
         song47.year.value = 2000
         song47.genre = "singer-songwriter; indie; acoustic; folk; piano; indie rock"
         song47.composer = nil
@@ -742,6 +810,7 @@ class Settings: UITableViewController {
         song48.artist = "Ragana"
         song48.album = "YOU TAKE NOTHING"
         song48.track.value = 6
+        song48.discnumber.value = nil
         song48.year.value = 2017
         song48.genre = "metal; atmospheric black metal; doom; experimental; punk; screamo; sludge"
         song48.composer = nil
@@ -755,6 +824,7 @@ class Settings: UITableViewController {
         song49.artist = "Birdy Nam Nam"
         song49.album = "Birdy Nam Nam Live"
         song49.track.value = 6
+        song49.discnumber.value = nil
         song49.year.value = 2006
         song49.genre = "turntablism; electronic; funky jazz; instrumental; jazz"
         song49.composer = nil

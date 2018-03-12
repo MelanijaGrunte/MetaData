@@ -23,7 +23,8 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
         case albumTitle = "album - title"
         case trackTitle = "track - title"
         case title = "title"
-        case artistTrackAlbum = "artitst - track - album"
+        case artistTrackAlbum = "artist - track - album"
+        case defaultString = "your default format style"
     }
 
     func filenameString(for type: filenameType, song: Song) -> String {
@@ -43,7 +44,15 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
         case .title:
             return "\(song.titleDescription)"
         case .artistTrackAlbum:
+            print ("\(song.artistDescription) - \(song.trackDescription) - \(song.albumDescription)")
             return "\(song.artistDescription) - \(song.trackDescription) - \(song.albumDescription)"
+        case .defaultString:
+            let realm = try! Realm()
+            var customFormatString: Results<CustomFormatStringStyle>?
+            customFormatString = realm.objects(CustomFormatStringStyle.self)
+            let style = customFormatString?.last
+            print(style!.stringStyle)
+            return style!.stringStyle
         }
     }
 
@@ -55,7 +64,8 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
         .albumTitle,
         .trackTitle,
         .title,
-        .artistTrackAlbum
+        .artistTrackAlbum,
+        .defaultString
     ]
 
     override func viewDidLoad() {

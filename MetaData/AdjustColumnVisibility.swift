@@ -14,17 +14,59 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet var adjustColumnVisibilityView: UIView!
     @IBOutlet weak var adjustColumnVisibilityTableView: UITableView!
 
-    let columnSets: [String] = [
-        "file name",
-        "title",
-        "artist",
-        "track",
-        "year",
-        "genre",
-        "composer",
-        "comment",
-        "album art image",
-        "album art artist"
+    enum ColumnCase: String {
+        case filename = "Filename"
+        case title = "Title"
+        case artist = "Artist"
+        case album = "Album"
+        case track = "Track"
+        case year = "Year"
+        case genre = "Genre"
+        case composer = "Composer"
+        case comment = "Comment"
+        case albumArtist = "Album artist"
+    }
+
+    func columnChoice(for type: ColumnCase) -> String {
+        switch type {
+        case .filename:
+            let realm = try! Realm()
+            try! realm.write {
+                realm.deleteAll()
+            }
+            return "filename"
+        case .title:
+            return "title"
+        case .artist:
+            return "artist"
+        case .album:
+            return "album"
+        case .track:
+            return "track"
+        case .year:
+            return "year"
+        case .genre:
+            return "genre"
+        case .composer:
+            return "composer"
+        case .comment:
+            return "comment"
+        case .albumArtist:
+            return "albumArtist"
+        }
+    }
+
+    let columns: [ColumnCase] = [
+        .filename,
+        .title,
+        .artist,
+        .album,
+        .track,
+        .year,
+        .genre,
+        .composer,
+        .comment,
+        .albumArtist
     ]
 
     override func viewDidLoad() {
@@ -38,55 +80,26 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return columnSets.count;
+        return columns.count;
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.row{
-        case 0:
-            print("good day")
-
-        case 1:
-            print("whats up")
-
-        case 2:
-            print("wazaaa")
-
-        case 3:
-            print("hi")
-
-        case 4:
-            print("yo")
-
-        case 5:
-            print("hello")
-
-        case 6:
-            print("howdy")
-
-        case 7:
-            print("sup")
-
-        case 8:
-            print("...")
-
-        case 9:
-            print("g'day")
-
-        default:
-            print("bye")
-        }
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)  {
+        let type = columns[indexPath.row]
         let realm = try! Realm()
+        let column = Column()
+        column.choice = columnChoice(for: type)
         try! realm.write {
-            realm.deleteAll()
+            realm.add(column)
         }
+        tableView.reloadData()
         dismiss(animated: true, completion: nil)
     }
+
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
-        cell.textLabel?.text = columnSets[indexPath.row]
+        cell.textLabel?.text = columns[indexPath.row].rawValue
         cell.textLabel?.font = cell.textLabel?.font.withSize(20)
         return cell
     }

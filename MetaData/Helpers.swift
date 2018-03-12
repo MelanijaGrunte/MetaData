@@ -12,3 +12,16 @@ import RealmSwift
 class Attribute: Object {
      @objc dynamic var choice: String = "filename"
 }
+
+class Column: Object {
+    @objc dynamic var choice: String = "filename"
+}
+
+class CustomFormatStringStyle: Object {
+    @objc dynamic var stringStyle: String = "\\(song.filename)"
+}
+//
+//class CustomFormatStringStyleArray: Object {
+//    @objc dynamic var values: Array = [String]()
+//}
+

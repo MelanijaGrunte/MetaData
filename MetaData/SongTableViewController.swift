@@ -20,7 +20,6 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
     let realm = try! Realm()
     var songs = [Song]()
     var displayedSongs: Results<Song>!
-    //var attribute = "filename"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +71,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
             attribute = realm.objects(Attribute.self)
             if let attr = attribute?.last {
                 displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true)])
+            } else {
+                displayedSongs = songs.sorted(byKeyPath: "filename")
             }
         }
         if searchText == "" {
@@ -122,7 +123,10 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
                 }) {
                     songs[index] = song
                 }
-                // displayedSongs[selectedIndexPath.row] = song
+//                var array = Array(displayedSongs)
+//                array[selectedIndexPath.row] = song
+                //displayedSongs[selectedIndexPath.row] = song
+
                 // šis lkm ruins to, ka ejot no dziesmas editoshanas uzlec liidz pashai aughsai
                 loadSampleSongs()
                 tableView.reloadRows(at: [selectedIndexPath], with: .none)
@@ -140,6 +144,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
         attribute = realm.objects(Attribute.self)
         if let attr = attribute?.last {
             displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true)])
+        } else {
+            displayedSongs = songs.sorted(byKeyPath: "filename")
         }
 
         self.tableView.reloadData()

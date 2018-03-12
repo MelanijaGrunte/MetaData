@@ -19,6 +19,8 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         case title = "Title"
         case artist = "Artist"
         case album = "Album"
+        case track = "Track"
+        case year = "Year"
         case composer = "Composer"
     }
 
@@ -32,6 +34,10 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
             return "artist"
         case .album:
             return "album"
+        case .track:
+            return "track"
+        case .year:
+            return "year"
         case .composer:
             return "composer"
         }
@@ -42,6 +48,8 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         .title,
         .artist,
         .album,
+        .track,
+        .year,
         .composer
     ]
 
