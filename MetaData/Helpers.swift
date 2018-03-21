@@ -20,6 +20,11 @@ class Column: Object {
 class CustomFormatStringStyle: Object {
     @objc dynamic var stringStyle: String = "\\(song.filename)"
 }
+
+class SegueIdentifier: Object {
+    @objc dynamic var identifier: String = "nextSongVC"
+}
+
 //
 //class CustomFormatStringStyleArray: Object {
 //    @objc dynamic var values: Array = [String]()

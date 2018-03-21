@@ -17,16 +17,24 @@ class Settings: UITableViewController {
     @IBOutlet weak var configureFormatStyleCell: UITableViewCell!
     @IBOutlet weak var configureFormatStyleButton: UIButton!
     @IBOutlet weak var formatStringRenamingSwitchOutlet: UISwitch!
+    @IBOutlet weak var goToNextSongWhenEditingSwitchOutlet: UISwitch!
 
-    var switchState = false
-    let switchKey = "switchState"
+    var switchStateForGoingToTheNextSong = false
+    var switchStateForRenamingFilesAutomatically = false
+
+    let switchKeyForGoingToTheNextSong = "goToNextSongSwitchState"
+    let switchKeyForRenamingFilesAutomatically = "renameFilesAutomaticallySwitchState"
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
 
-        formatStringRenamingSwitchOutlet.isOn =  UserDefaults.standard.bool(forKey: "switchState")
+        goToNextSongWhenEditingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForGoingToTheNextSong)
+        goToNextSongWhenEditingSwitch(goToNextSongWhenEditingSwitchOutlet)
+
+        formatStringRenamingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForRenamingFilesAutomatically)
         formatStringRenamingSwitch(formatStringRenamingSwitchOutlet)
     }
 
@@ -55,8 +63,19 @@ class Settings: UITableViewController {
             configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
             configureFormatStyleCell.isUserInteractionEnabled = false
         }
-        UserDefaults.standard.set(sender.isOn, forKey: "switchState")
+        UserDefaults.standard.set(sender.isOn, forKey: switchKeyForRenamingFilesAutomatically)
     }
+
+    @IBAction func goToNextSongWhenEditingSwitch(_ sender: UISwitch) {
+        if (sender.isOn == true) {
+            print("hell yeah")
+        }
+        if (sender.isOn == false) {
+            print(":(")
+        }
+        UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)
+    }
+    
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
@@ -123,6 +142,7 @@ class Settings: UITableViewController {
         let albumArt47 = NSData(data: UIImagePNGRepresentation(UIImage(named: "figure 8")!)!) as Data
         let albumArt48 = NSData(data: UIImagePNGRepresentation(UIImage(named: "you take nothing")!)!) as Data
         let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "birdy nam nam live")!)!) as Data
+        // let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "gloomy sunday")!)!) as Data
 
 
 //        let song1 = Song()
@@ -832,8 +852,22 @@ class Settings: UITableViewController {
         song49.albumArtImage = albumArt49
         song49.albumArtist = nil
 
+        let song50 = Song()
+        song50.filename = "Gloomy Sunday (original version)"
+        song50.title = "Gloomy Sunday"
+        song50.artist = nil
+        song50.album = nil
+        song50.track.value = nil
+        song50.discnumber.value = nil
+        song50.year.value = 1933
+        song50.genre = nil
+        song50.composer = "Rezső Seress"
+        song50.comment = "poem by László Jávor"
+        song50.albumArtImage = nil
+        song50.albumArtist = nil
+
         try! realm.write{
-            realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49])
+            realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50])
         }
 
     }

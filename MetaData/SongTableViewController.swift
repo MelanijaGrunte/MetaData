@@ -107,6 +107,11 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
             }
             let selectedSong = displayedSongs[indexPath.row]
             songDetailViewController.song = selectedSong
+
+            songDetailViewController.tableSongs = displayedSongs
+            songDetailViewController.selectedIndex = indexPath.row
+            songDetailViewController.song = displayedSongs[indexPath.row]
+
         default: ()
         }
     }
@@ -114,7 +119,27 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
     //MARK: Actions
 
     // rediģētās dziesmas aizstāšana ar veco versiju
-    func unwindToSongList(sender: UIStoryboardSegue) {
+//    func unwindToSongList(sender: UIStoryboardSegue) {
+//        if let sourceViewController = sender.source as? SongViewController, let song = sourceViewController.song {
+//            if let selectedIndexPath = tableView.indexPathForSelectedRow {
+//                let oldSong = displayedSongs[selectedIndexPath.row]
+//                if let index = songs.index(where: { song -> Bool in
+//                    return song == oldSong
+//                }) {
+//                    songs[index] = song
+//                }
+////                var array = Array(displayedSongs)
+////                array[selectedIndexPath.row] = song
+//                //displayedSongs[selectedIndexPath.row] = song
+//
+//                // šis lkm ruins to, ka ejot no dziesmas editoshanas uzlec liidz pashai aughsai
+//                loadSampleSongs()
+//                tableView.reloadRows(at: [selectedIndexPath], with: .none)
+//            }
+//        }
+//    }
+
+    @IBAction func unwindToSongTableView(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.source as? SongViewController, let song = sourceViewController.song {
             if let selectedIndexPath = tableView.indexPathForSelectedRow {
                 let oldSong = displayedSongs[selectedIndexPath.row]
@@ -123,8 +148,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate {
                 }) {
                     songs[index] = song
                 }
-//                var array = Array(displayedSongs)
-//                array[selectedIndexPath.row] = song
+                //                var array = Array(displayedSongs)
+                //                array[selectedIndexPath.row] = song
                 //displayedSongs[selectedIndexPath.row] = song
 
                 // šis lkm ruins to, ka ejot no dziesmas editoshanas uzlec liidz pashai aughsai

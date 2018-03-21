@@ -40,7 +40,16 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var albumArtistText: UITextField!
     @IBOutlet weak var saveButton: UIBarButtonItem!
 
+    let realm = try! Realm()
     var song: Song?
+    var segueIdentifier = "segueToSongTableVC"
+    var selectedIndex: Int! // labi
+//    var tableSongs: Results<Song>!
+    var tableSongs: Results<Song>!
+//    var songs = [Song]()
+
+
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -110,6 +119,11 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
 
     //MARK: Navigation
 
+    
+    @IBAction func saveIsTapped(_ sender: UIBarButtonItem) {
+        self.performSegue(withIdentifier: segueIdentifier, sender: self)
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
 
@@ -137,10 +151,65 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         } else {
             print("segue inexistant") }
 
-        guard let button = sender as? UIBarButtonItem, button === saveButton else {
+//            selectedIndex = selectedIndex + 1
+//            print(selectedIndex)
+//
+//            let nextSong = songs[selectedIndex]
+//            // let nextSongDetailViewController = segue.destination as? SongViewController
+//                print("working")
+//            print(nextSong)
+//                //let indexPath = selectedIndex
+//                //let selectedSong = tableSongs[indexPath!]
+//            nextSongDetailViewController.song = nextSong
+//                print("working here aswell")
+
+        
+        
+        let segueChoice = SegueIdentifier()
+        segueChoice.identifier = "segueToNextSongVC"
+        try! realm.write {
+            realm.add(segueChoice)
+        }
+
+
+        if let button = sender as? UIBarButtonItem, button === saveButton {
+
+            var segueChoice: Results<SegueIdentifier>?
+            segueChoice = realm.objects(SegueIdentifier.self)
+            if let seg = segueChoice?.last {
+
+                if seg.identifier == "unwindToSongTableView" {
+                    let destination = segue.destination as! SongTableViewController
+                    performSegue(withIdentifier: "unwindToSongTableView", sender: nil)
+                    print("unwindToSongTableView")
+                }
+
+                if seg.identifier == "segueToNextSongVC" {
+
+                    if ((selectedIndex + 1) < tableSongs.count) {
+                        selectedIndex = selectedIndex + 1 // labi
+                        let selectedSong = tableSongs[selectedIndex!] // labi
+
+                        let destinationVC = SongViewController.storyboardInstance(storyboardId: "Main", restorationId: "SongViewController") as! SongViewController
+                        destinationVC.song = selectedSong
+                        self.navigationController?.pushViewController(destinationVC, animated: false)
+                        // performSegue(withIdentifier: "segueToNextSongVC", sender: nil)
+                        print("segueToNextSongVC")
+                    }
+                }
+            }
+        }
+        else {
             os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
             return }
-        
+    }
+
+
+    @IBAction func segueToNextSongVC(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? SongViewController {
+            //dataRecieved = sourceViewController.dataPassed
+            print("im here")
+        }
     }
 
     //MARK: Actions
@@ -166,4 +235,11 @@ func optionalStringToInt(string: String?) -> Int? {
         return Int(string)
     }
     return nil
+}
+
+extension UIViewController {
+    class func storyboardInstance(storyboardId: String, restorationId: String) -> UIViewController {
+        let storyboard = UIStoryboard(name: storyboardId, bundle: nil)
+        return storyboard.instantiateViewController(withIdentifier: restorationId)
+    }
 }
