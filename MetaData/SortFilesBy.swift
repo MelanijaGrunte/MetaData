@@ -10,10 +10,10 @@ import UIKit
 import RealmSwift
 
 class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     @IBOutlet var sortFilesByView: UIView!
     @IBOutlet weak var sortFilesByTableView: UITableView!
-
+    
     enum SortField: String {
         case filename = "Filename"
         case title = "Title"
@@ -23,7 +23,7 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         case year = "Year"
         case composer = "Composer"
     }
-
+    
     func attributeChoice(for type: SortField) -> String {
         switch type {
         case .filename:
@@ -42,7 +42,7 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
             return "composer"
         }
     }
-
+    
     let attributes: [SortField] = [
         .filename,
         .title,
@@ -52,22 +52,22 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         .year,
         .composer
     ]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         sortFilesByTableView.dataSource = self
         sortFilesByTableView.delegate = self
         sortFilesByTableView.layer.cornerRadius = 10
         sortFilesByTableView.layer.masksToBounds = true
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return attributes.count;
     }
-
+    
     // MARK: actions
-
+    
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)  {
         let type = attributes[indexPath.row]
         let realm = try! Realm()
@@ -79,7 +79,7 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         tableView.reloadData()
         dismiss(animated: true, completion: nil)
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell

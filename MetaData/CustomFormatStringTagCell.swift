@@ -12,11 +12,10 @@ class CustomFormatStringTagCell: UICollectionViewCell {
     
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var checkbox: UIImageView!
-
+    
     var cellValue: String = ""
-
+    
     override func awakeFromNib() {
         checkbox.image = UIImage(named: "empty")
     }
 }
-

@@ -1,4 +1,3 @@
-import RealmSwift
 //
 //  Settings.swift
 //  MetaData
@@ -8,91 +7,108 @@ import RealmSwift
 //
 
 import UIKit
+import RealmSwift
 
 class Settings: UITableViewController {
-
-
+    
+    
     @IBOutlet weak var selectFormatStringCell: UITableViewCell!
     @IBOutlet weak var selectFormatStringButton: UIButton!
     @IBOutlet weak var configureFormatStyleCell: UITableViewCell!
     @IBOutlet weak var configureFormatStyleButton: UIButton!
     @IBOutlet weak var formatStringRenamingSwitchOutlet: UISwitch!
     @IBOutlet weak var goToNextSongWhenEditingSwitchOutlet: UISwitch!
-
+    
     var switchStateForGoingToTheNextSong = false
     var switchStateForRenamingFilesAutomatically = false
-
+    
     let switchKeyForGoingToTheNextSong = "goToNextSongSwitchState"
     let switchKeyForRenamingFilesAutomatically = "renameFilesAutomaticallySwitchState"
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
-
+        
         goToNextSongWhenEditingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForGoingToTheNextSong)
         goToNextSongWhenEditingSwitch(goToNextSongWhenEditingSwitchOutlet)
-
+        
         formatStringRenamingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForRenamingFilesAutomatically)
         formatStringRenamingSwitch(formatStringRenamingSwitchOutlet)
     }
-
     
-
     @IBAction func formatStringRenamingSwitch(_ sender: UISwitch) {
+        let realm = try! Realm()
+        let renamingStyleChoice = AutomaticFileRenaming()
+        
         if (sender.isOn == true) {
+            renamingStyleChoice.automatically = true
+            try! realm.write {
+                realm.add(renamingStyleChoice)
+            }
             selectFormatStringCell.backgroundColor = UIColor.white
             selectFormatStringButton.setTitleColor(.black, for: .normal)
             selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.none
             selectFormatStringCell.isUserInteractionEnabled = true
-
+            
             configureFormatStyleCell.backgroundColor = UIColor.white
             configureFormatStyleButton.setTitleColor(.black, for: .normal)
             configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.none
             configureFormatStyleCell.isUserInteractionEnabled = true
         }
         if (sender.isOn == false) {
-//            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+            renamingStyleChoice.automatically = false
+            try! realm.write {
+                realm.add(renamingStyleChoice)
+            }
+            //            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
             selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
             selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
             selectFormatStringCell.isUserInteractionEnabled = false
-
-//            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+            
+            //            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
             configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
             configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
             configureFormatStyleCell.isUserInteractionEnabled = false
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForRenamingFilesAutomatically)
     }
-
+    
     @IBAction func goToNextSongWhenEditingSwitch(_ sender: UISwitch) {
+        let realm = try! Realm()
         if (sender.isOn == true) {
-            print("hell yeah")
+            let segueChoice = SegueIdentifier()
+            segueChoice.identifier = "segueToNextSongVC"
+            try! realm.write {
+                realm.add(segueChoice)
+            }
         }
         if (sender.isOn == false) {
-            print(":(")
+            let segueChoice = SegueIdentifier()
+            segueChoice.identifier = "unwindToSongTVC"
+            try! realm.write {
+                realm.add(segueChoice)
+            }
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)
     }
     
-
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             let realm = try! Realm()
             let songs = realm.objects(Song.self)
-
             try! realm.write {
                 realm.add(songs)
             }
         }
     }
-
+    
     @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.source as? ReplaceStrings {
         }
     }
-
+    
     @IBAction func loadSongs(_ sender: UIButton) {
         
         let albumArt1 = NSData(data: UIImagePNGRepresentation(UIImage(named: "chair beside a window")!)!) as Data
@@ -143,28 +159,14 @@ class Settings: UITableViewController {
         let albumArt48 = NSData(data: UIImagePNGRepresentation(UIImage(named: "you take nothing")!)!) as Data
         let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "birdy nam nam live")!)!) as Data
         // let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "gloomy sunday")!)!) as Data
-
-
-//        let song1 = Song()
-//        song1.filename = "jandek down in a mirror"
-//        song1.title = "Down in a mirror"
-//        song1.artist = "Jandek"
-//        song1.album = "Chair Beside a Window"
-//        song1.track.value = 01
-//        song1.year.value = 1982
-//        song1.genre = "blues; lo-fi; folk; experimental"
-//        song1.composer = "Jandek"
-//        song1.comment = nil
-//        song1.albumArtImage = albumArt1
-//        song1.albumArtist = nil
-
+        
         let realm = try! Realm()
         try! realm.write() {
             let song1 = realm.create(Song.self, value: ["jandek down in a mirror", "Down in a mirror", "Jandek", "Chair Beside a Window", 01, nil,  1982, "blues; lo-fi; folk; experimental", "Jandek", nil, albumArt1, nil])
             song1.track.value = 01
             song1.year.value = 1982
         }
-
+        
         //        let song1 = Song()
         //        song1.filename = "jandek down in a mirror"
         //        song1.title = "Down in a mirror"
@@ -177,8 +179,7 @@ class Settings: UITableViewController {
         //        song1.comment = nil
         //        song1.albumArtImage = albumArt1
         //        song1.albumArtist = nil
-
-
+        
         let song2 = Song()
         song2.filename = "CHOMSKY CHESS CLUB - TOURING"
         song2.title = "TOURING"
@@ -192,7 +193,7 @@ class Settings: UITableViewController {
         song2.comment = nil
         song2.albumArtImage = albumArt2
         song2.albumArtist = nil
-
+        
         let song3 = Song()
         song3.filename = "this old dog (slowed)"
         song3.title = "this old dog"
@@ -206,7 +207,7 @@ class Settings: UITableViewController {
         song3.comment = "slowed"
         song3.albumArtImage = albumArt3
         song3.albumArtist = nil
-
+        
         let song4 = Song()
         song4.filename = "C.F. Bundy"
         song4.title = "C.F. Bundy"
@@ -220,7 +221,7 @@ class Settings: UITableViewController {
         song4.comment = nil
         song4.albumArtImage = albumArt4and5
         song4.albumArtist = "Vania Zouravliov"
-
+        
         let song5 = Song()
         song5.filename = "the Kursk"
         song5.title = "the Kursk"
@@ -234,8 +235,8 @@ class Settings: UITableViewController {
         song5.comment = nil
         song5.albumArtImage = albumArt4and5
         song5.albumArtist = "Vania Zouravliov"
-
-
+        
+        
         let song6 = Song()
         song6.filename = "METZ Acetate"
         song6.title = "Acetate"
@@ -249,7 +250,7 @@ class Settings: UITableViewController {
         song6.comment = nil
         song6.albumArtImage = albumArt6
         song6.albumArtist = nil
-
+        
         let song7 = Song()
         song7.filename = "Ratatat - Shiller"
         song7.title = "Shiller"
@@ -263,7 +264,7 @@ class Settings: UITableViewController {
         song7.comment = nil
         song7.albumArtImage = albumArt7
         song7.albumArtist = nil
-
+        
         let song8 = Song()
         song8.filename = "Black Magick by Ty Segall"
         song8.title = "Black Magick"
@@ -277,7 +278,7 @@ class Settings: UITableViewController {
         song8.comment = nil
         song8.albumArtImage = albumArt8
         song8.albumArtist = nil
-
+        
         let song9 = Song()
         song9.filename = "I Name This Ship the Tragedy, Bless Her and All Who Sail with Her"
         song9.title = "I Name This Ship the Tragedy, Bless Her and All Who Sail with Her"
@@ -291,7 +292,7 @@ class Settings: UITableViewController {
         song9.comment = nil
         song9.albumArtImage = albumArt9
         song9.albumArtist = nil
-
+        
         let song10 = Song()
         song10.filename = "Michael Hurley — Troubled Waters"
         song10.title = "Troubled Waters"
@@ -305,7 +306,7 @@ class Settings: UITableViewController {
         song10.comment = "\"Mae West & Duke Ellington and His Orchestra\" cover"
         song10.albumArtImage = albumArt10
         song10.albumArtist = nil
-
+        
         let song11 = Song()
         song11.filename = "casino lisboa"
         song11.title = nil
@@ -319,7 +320,7 @@ class Settings: UITableViewController {
         song11.comment = nil
         song11.albumArtImage = nil
         song11.albumArtist = nil
-
+        
         let song12 = Song()
         song12.filename = "Cloudy, since you went away"
         song12.title = "Cloudy, since you went away"
@@ -333,7 +334,7 @@ class Settings: UITableViewController {
         song12.comment = nil
         song12.albumArtImage = albumArt12
         song12.albumArtist = nil
-
+        
         let song13 = Song()
         song13.filename = "brick"
         song13.title = "Brick"
@@ -347,7 +348,7 @@ class Settings: UITableViewController {
         song13.comment = nil
         song13.albumArtImage = albumArt13
         song13.albumArtist = nil
-
+        
         let song14 = Song()
         song14.filename = "ether"
         song14.title = "ether"
@@ -361,7 +362,7 @@ class Settings: UITableViewController {
         song14.comment = nil
         song14.albumArtImage = albumArt14and15
         song14.albumArtist = nil
-
+        
         let song15 = Song()
         song15.filename = "Where are you?"
         song15.title = "where are you?"
@@ -375,7 +376,7 @@ class Settings: UITableViewController {
         song15.comment = nil
         song15.albumArtImage = albumArt14and15
         song15.albumArtist = nil
-
+        
         let song16 = Song()
         song16.filename = "日出東方 唯我不敗"
         song16.title = "日出東方 唯我不敗"
@@ -389,7 +390,7 @@ class Settings: UITableViewController {
         song16.comment = nil
         song16.albumArtImage = albumArt16
         song16.albumArtist = nil
-
+        
         let song17 = Song()
         song17.filename = "Articulate (Im Going So Far Into You)"
         song17.title = "Articulate (Im Going So Far Into You)"
@@ -403,7 +404,7 @@ class Settings: UITableViewController {
         song17.comment = "with Zach Hill and Andy Morin of Death Grips"
         song17.albumArtImage = albumArt17
         song17.albumArtist = nil
-
+        
         let song18 = Song()
         song18.filename = "Mazie Smirdīgie Kociņi — Pulkstens"
         song18.title = "Pulkstens"
@@ -417,7 +418,7 @@ class Settings: UITableViewController {
         song18.comment = nil
         song18.albumArtImage = albumArt18
         song18.albumArtist = nil
-
+        
         let song19 = Song()
         song19.filename = "Strix Nebulosa"
         song19.title = "Strix Nebulosa"
@@ -431,7 +432,7 @@ class Settings: UITableViewController {
         song19.comment = nil
         song19.albumArtImage = nil
         song19.albumArtist = nil
-
+        
         let song20 = Song()
         song20.filename = "Show Me The Body - Hungry (Dreamcrusher)"
         song20.title = "Hungry"
@@ -445,7 +446,7 @@ class Settings: UITableViewController {
         song20.comment = nil
         song20.albumArtImage = albumArt20
         song20.albumArtist = nil
-
+        
         let song21 = Song()
         song21.filename = "Księżyc - Verlaine I"
         song21.title = "Verlaine I"
@@ -459,7 +460,7 @@ class Settings: UITableViewController {
         song21.comment = nil
         song21.albumArtImage = albumArt21
         song21.albumArtist = nil
-
+        
         let song22 = Song()
         song22.filename = "the world looks red"
         song22.title = "the world looks red"
@@ -473,7 +474,7 @@ class Settings: UITableViewController {
         song22.comment = nil
         song22.albumArtImage = albumArt22
         song22.albumArtist = nil
-
+        
         let song23 = Song()
         song23.filename = "Love can be..."
         song23.title = "Love can be..."
@@ -487,7 +488,7 @@ class Settings: UITableViewController {
         song23.comment = nil
         song23.albumArtImage = albumArt23
         song23.albumArtist = nil
-
+        
         let song24 = Song()
         song24.filename = "haze of interference"
         song24.title = "haze of interference"
@@ -501,7 +502,7 @@ class Settings: UITableViewController {
         song24.comment = nil
         song24.albumArtImage = albumArt24
         song24.albumArtist = nil
-
+        
         let song25 = Song()
         song25.filename = "KBGK"
         song25.title = "KBGK"
@@ -515,7 +516,7 @@ class Settings: UITableViewController {
         song25.comment = nil
         song25.albumArtImage = albumArt25
         song25.albumArtist = nil
-
+        
         let song26 = Song()
         song26.filename = "tesa s"
         song26.title = "s"
@@ -529,7 +530,7 @@ class Settings: UITableViewController {
         song26.comment = nil
         song26.albumArtImage = albumArt26
         song26.albumArtist = nil
-
+        
         let song27 = Song()
         song27.filename = "Oytö"
         song27.title = nil
@@ -543,7 +544,7 @@ class Settings: UITableViewController {
         song27.comment = nil
         song27.albumArtImage = nil
         song27.albumArtist = nil
-
+        
         let song28 = Song()
         song28.filename = "buttress - inferno"
         song28.title = "inferno"
@@ -557,7 +558,7 @@ class Settings: UITableViewController {
         song28.comment = nil
         song28.albumArtImage = albumArt28
         song28.albumArtist = nil
-
+        
         let song29 = Song()
         song29.filename = "Gatis Ziema - Maskava"
         song29.title = "Maskava"
@@ -571,7 +572,7 @@ class Settings: UITableViewController {
         song29.comment = nil
         song29.albumArtImage = nil //albumArt29
         song29.albumArtist = nil
-
+        
         let song30 = Song()
         song30.filename = "emptyset: function"
         song30.title = "function"
@@ -585,7 +586,7 @@ class Settings: UITableViewController {
         song30.comment = nil
         song30.albumArtImage = albumArt30
         song30.albumArtist = nil
-
+        
         let song31 = Song()
         song31.filename = "hideous - outting"
         song31.title = "Outting"
@@ -599,7 +600,7 @@ class Settings: UITableViewController {
         song31.comment = nil
         song31.albumArtImage = albumArt31
         song31.albumArtist = nil
-
+        
         let song32 = Song()
         song32.filename = "March Out of Step When Crossing a Bridge"
         song32.title = "March Out of Step When Crossing a Bridge"
@@ -613,7 +614,7 @@ class Settings: UITableViewController {
         song32.comment = nil
         song32.albumArtImage = albumArt32
         song32.albumArtist = nil
-
+        
         let song33 = Song()
         song33.filename = "not waving - animals"
         song33.title = "28 (Bonus Track)"
@@ -627,7 +628,7 @@ class Settings: UITableViewController {
         song33.comment = nil
         song33.albumArtImage = albumArt33
         song33.albumArtist = nil
-
+        
         let song34 = Song()
         song34.filename = "sneeze forks"
         song34.title = "sneeze forks"
@@ -641,7 +642,7 @@ class Settings: UITableViewController {
         song34.comment = nil
         song34.albumArtImage = albumArt34
         song34.albumArtist = nil
-
+        
         let song35 = Song()
         song35.filename = "mona de bo - priekšpēdējais"
         song35.title = "priekšpēdējais"
@@ -655,7 +656,7 @@ class Settings: UITableViewController {
         song35.comment = nil
         song35.albumArtImage = nil // albumArt35
         song35.albumArtist = nil
-
+        
         let song36 = Song()
         song36.filename = "Death Grips - Guillotine"
         song36.title = "Guillotine"
@@ -669,7 +670,7 @@ class Settings: UITableViewController {
         song36.comment = nil
         song36.albumArtImage = albumArt36
         song36.albumArtist = nil
-
+        
         let song37 = Song()
         song37.filename = "Devil Town"
         song37.title = "Devil Town"
@@ -683,7 +684,7 @@ class Settings: UITableViewController {
         song37.comment = nil
         song37.albumArtImage = albumArt37
         song37.albumArtist = nil
-
+        
         let song38 = Song()
         song38.filename = "The Glow Pt. 2, track 1"
         song38.title = "I want wind to blow"
@@ -697,7 +698,7 @@ class Settings: UITableViewController {
         song38.comment = nil
         song38.albumArtImage = albumArt38
         song38.albumArtist = nil
-
+        
         let song39 = Song()
         song39.filename = "Ik Rītiņi Saule Lēca"
         song39.title = "Ik Rītiņi Saule Lēca"
@@ -711,7 +712,7 @@ class Settings: UITableViewController {
         song39.comment = nil
         song39.albumArtImage = albumArt39
         song39.albumArtist = nil
-
+        
         let song40 = Song()
         song40.filename = "Wardruna - AnsuR"
         song40.title = "AnsuR"
@@ -725,7 +726,7 @@ class Settings: UITableViewController {
         song40.comment = nil
         song40.albumArtImage = albumArt40
         song40.albumArtist = nil
-
+        
         let song41 = Song()
         song41.filename = "Kill Alters - D20"
         song41.title = "D20"
@@ -739,7 +740,7 @@ class Settings: UITableViewController {
         song41.comment = nil
         song41.albumArtImage = albumArt41
         song41.albumArtist = nil
-
+        
         let song42 = Song()
         song42.filename = "Kill Alters - Ego Swim"
         song42.title = "Ego Swim"
@@ -753,7 +754,7 @@ class Settings: UITableViewController {
         song42.comment = nil
         song42.albumArtImage = albumArt42
         song42.albumArtist = nil
-
+        
         let song43 = Song()
         song43.filename = "all dogs go to heaven"
         song43.title = "all dogs go to heaven"
@@ -767,7 +768,7 @@ class Settings: UITableViewController {
         song43.comment = nil
         song43.albumArtImage = albumArt43
         song43.albumArtist = nil
-
+        
         let song44 = Song()
         song44.filename = "pearsforlunch.mp3"
         song44.title = "pears for lunch"
@@ -781,7 +782,7 @@ class Settings: UITableViewController {
         song44.comment = nil
         song44.albumArtImage = albumArt44
         song44.albumArtist = nil
-
+        
         let song45 = Song()
         song45.filename = "eva eva"
         song45.title = "eva eva"
@@ -795,7 +796,7 @@ class Settings: UITableViewController {
         song45.comment = nil
         song45.albumArtImage = albumArt45
         song45.albumArtist = nil
-
+        
         let song46 = Song()
         song46.filename = "NO NATURAL ORDER"
         song46.title = "NO NATURAL ORDER"
@@ -809,7 +810,7 @@ class Settings: UITableViewController {
         song46.comment = nil
         song46.albumArtImage = albumArt46
         song46.albumArtist = nil
-
+        
         let song47 = Song()
         song47.filename = "bye"
         song47.title = "bye"
@@ -823,7 +824,7 @@ class Settings: UITableViewController {
         song47.comment = nil
         song47.albumArtImage = albumArt47
         song47.albumArtist = nil
-
+        
         let song48 = Song()
         song48.filename = "ragana - YOU TAKE NOTHING"
         song48.title = "YOU TAKE NOTHING"
@@ -837,7 +838,7 @@ class Settings: UITableViewController {
         song48.comment = nil
         song48.albumArtImage = albumArt48
         song48.albumArtist = nil
-
+        
         let song49 = Song()
         song49.filename = "Birdy Nam Nam - Violons (Part 1)"
         song49.title = "Violons (Part 1)"
@@ -851,7 +852,7 @@ class Settings: UITableViewController {
         song49.comment = nil
         song49.albumArtImage = albumArt49
         song49.albumArtist = nil
-
+        
         let song50 = Song()
         song50.filename = "Gloomy Sunday (original version)"
         song50.title = "Gloomy Sunday"
@@ -865,10 +866,10 @@ class Settings: UITableViewController {
         song50.comment = "poem by László Jávor"
         song50.albumArtImage = nil
         song50.albumArtist = nil
-
+        
         try! realm.write{
             realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50])
         }
-
+        print("song loading complete")
     }
 }

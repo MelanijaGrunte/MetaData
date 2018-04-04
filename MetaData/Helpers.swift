@@ -10,7 +10,7 @@ import UIKit
 import RealmSwift
 
 class Attribute: Object {
-     @objc dynamic var choice: String = "filename"
+    @objc dynamic var choice: String = "filename"
 }
 
 class Column: Object {
@@ -21,12 +21,22 @@ class CustomFormatStringStyle: Object {
     @objc dynamic var stringStyle: String = "\\(song.filename)"
 }
 
-class SegueIdentifier: Object {
-    @objc dynamic var identifier: String = "nextSongVC"
+class TagReplacement: Object {
+    @objc dynamic var tagReplacement: String = ""
 }
 
-//
-//class CustomFormatStringStyleArray: Object {
-//    @objc dynamic var values: Array = [String]()
-//}
+class Separation: Object {
+    @objc dynamic var separationText: String = ""
+}
 
+class SegueIdentifier: Object {
+    @objc dynamic var identifier: String = "unwindToSongTVC"
+}
+
+class AutomaticFileRenaming: Object {
+    @objc dynamic var automatically: Bool = false
+}
+
+//class FileRenamingChoice: Object {
+//    @objc dynamic var chosenStyle: Int = 1
+//}

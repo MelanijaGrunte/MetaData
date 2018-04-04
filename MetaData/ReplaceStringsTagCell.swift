@@ -9,12 +9,12 @@
 import UIKit
 
 class ReplaceStringsTagCell: UICollectionViewCell {
-
+    
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var checkbox: UIImageView!
     
     var array: Array = [String]()
-
+    
     override func awakeFromNib() {
         checkbox.image = UIImage(named: "unchecked")
     }
