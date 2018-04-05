@@ -20,8 +20,12 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         case artist = "Artist"
         case album = "Album"
         case track = "Track"
+        case discnumber = "Discnumber"
         case year = "Year"
+        case genre = "Genre"
         case composer = "Composer"
+        case comment = "Comment"
+        case albumArtist = "Album artist"
     }
     
     func attributeChoice(for type: SortField) -> String {
@@ -36,10 +40,18 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
             return "album"
         case .track:
             return "track"
+        case .discnumber:
+            return "discnumber"
         case .year:
             return "year"
+        case .genre:
+            return "genre"
         case .composer:
             return "composer"
+        case .comment:
+            return "comment"
+        case .albumArtist:
+            return "albumArtist"
         }
     }
     
@@ -49,8 +61,12 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         .artist,
         .album,
         .track,
+        .discnumber,
         .year,
-        .composer
+        .genre,
+        .composer,
+        .comment,
+        .albumArtist
     ]
     
     override func viewDidLoad() {

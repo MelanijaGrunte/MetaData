@@ -18,7 +18,7 @@ class Column: Object {
 }
 
 class CustomFormatStringStyle: Object {
-    @objc dynamic var stringStyle: String = "\\(song.filename)"
+    @objc dynamic var stringStyle: String = ""
 }
 
 class TagReplacement: Object {
@@ -26,7 +26,7 @@ class TagReplacement: Object {
 }
 
 class Separation: Object {
-    @objc dynamic var separationText: String = ""
+    @objc dynamic var separationText: String = " "
 }
 
 class SegueIdentifier: Object {

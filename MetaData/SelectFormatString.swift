@@ -126,6 +126,11 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
                 
                 // custom format string stylam
                 if type == types[8] {
+                    if formatString == "" {
+                        print("Custom format string has not been made!")
+                        break
+                    }
+                    
                     // ja ir izvēlēts, lai dziesmas, kurām nav kāds no izvēlētajiem atribūtiem, nemaina filename nosaukumu
                     if replacement?.tagReplacement == "unchanged filename" && formatString.range(of: "unknown") != nil {
                         print("\"\(songs.filename)\" will not be changed")
@@ -152,14 +157,15 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
                             // vienīgi teorētiski, ja tie ir filename, tad nevar būt vienādi failu nosaukumi.
                         }
                         // ja fails ir bez atribūtiem, bet to vietā ir kkāds replacement, tad "unknown title - unknown album - unknown track" vietā ieliek ieliek "unknown filename"
-                        var onlyReplacement = "\((replacement?.tagReplacement)!)"
-                        let repeatingString = " \(separation!.separationText) \((replacement?.tagReplacement)!)"
-                        for _ in 1..<10 {
-                            if songs.filename == onlyReplacement {
-                                songs.filename = "unknown filename"
-                            }
-                            onlyReplacement = onlyReplacement + repeatingString
-                        }
+                        if replacement?.tagReplacement != " " || replacement?.tagReplacement != "" || replacement?.tagReplacement != nil {
+                            var onlyReplacement = "\((replacement?.tagReplacement))"
+                            let repeatingString = " \(separation!.separationText) \((replacement?.tagReplacement))"
+                            for _ in 1..<10 {
+                                if songs.filename == onlyReplacement {
+                                    songs.filename = "unknown filename"
+                                }
+                                onlyReplacement = onlyReplacement + repeatingString
+                            } }
                     }
                     // ja ir izlaidies kāds atribūts un ir vairāki separationi
                     var nearbySeparations = "\(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)"
@@ -193,6 +199,20 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
         cell.textLabel?.text = types[indexPath.row].rawValue
         cell.textLabel?.font = cell.textLabel?.font.withSize(20)
+        
+        let realm = try! Realm()
+        var customFormatString: Results<CustomFormatStringStyle>?
+        customFormatString = realm.objects(CustomFormatStringStyle.self)
+        let style = customFormatString?.last
+        if style!.stringStyle == "" && indexPath.row == 8 {
+            let customStringStyleCell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "cellWithACustomStyle")
+            customStringStyleCell.textLabel?.textColor = UIColor(white: 0.75, alpha:1)
+            customStringStyleCell.textLabel?.text = types[indexPath.row].rawValue
+            customStringStyleCell.textLabel?.font = cell.textLabel?.font.withSize(20)
+            customStringStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
+            customStringStyleCell.isUserInteractionEnabled = false
+            return customStringStyleCell
+        }
         return cell
     }
 }

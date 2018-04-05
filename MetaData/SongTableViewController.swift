@@ -27,7 +27,7 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         
         searchBar.delegate = self
         searchBar.returnKeyType = UIReturnKeyType.done
-        //navigationItem.hidesSearchBarWhenScrolling = false
+        //navigationItem.hidesSearchBarWhenScrolling = false // nestrādā, bet īstenībā good point. varbūt kko tādu vajadzētu
         
         self.tableView.reloadData()
     }
@@ -48,7 +48,24 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
             fatalError("The dequeued cell is not an instance of SongTableViewCell.")
         }
         let song = displayedSongs[indexPath.row]
-        cell.columnAttribute.text = song.filename
+        let realm = try! Realm()
+        var columnAttribute: Results<Column>?
+        columnAttribute = realm.objects(Column.self)
+        if let column = columnAttribute?.last {
+            cell.columnAttribute.textColor = UIColor.black
+            cell.columnAttribute.text = song[column.choice] as? String
+            if column.choice == "track" || column.choice == "discnumber" || column.choice == "year" {
+                if let numberAttribute = song[column.choice] {
+                    cell.columnAttribute.text = String(describing: numberAttribute)
+                }
+            }
+            if cell.columnAttribute.text == nil {
+                cell.columnAttribute.text = song.filename
+                cell.columnAttribute.textColor = UIColor(white: 0.75, alpha:1)
+            }
+        } else {
+            cell.columnAttribute.text = song.filename
+        }
         if song.albumArtImage != nil {
             cell.albumArtImage?.image = UIImage(data: song.albumArtImage!)
         } else {
@@ -144,6 +161,7 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         attribute = realm.objects(Attribute.self)
         if let attr = attribute?.last {
             displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true)])
+            
         } else {
             displayedSongs = songs.sorted(byKeyPath: "filename")
         }

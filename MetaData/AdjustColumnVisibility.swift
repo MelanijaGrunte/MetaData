@@ -31,10 +31,6 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
     func columnChoice(for type: ColumnCase) -> String {
         switch type {
         case .filename:
-            let realm = try! Realm()
-            try! realm.write {
-                realm.deleteAll()
-            }
             return "filename"
         case .title:
             return "title"
@@ -86,7 +82,7 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
         return columns.count;
     }
     
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)  {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let type = columns[indexPath.row]
         let realm = try! Realm()
         let column = Column()
@@ -94,6 +90,7 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
         try! realm.write {
             realm.add(column)
         }
+        
         tableView.reloadData()
         dismiss(animated: true, completion: nil)
     }

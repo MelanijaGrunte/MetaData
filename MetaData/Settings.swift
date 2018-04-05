@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class Settings: UITableViewController {
+class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     
     @IBOutlet weak var selectFormatStringCell: UITableViewCell!
@@ -18,9 +18,10 @@ class Settings: UITableViewController {
     @IBOutlet weak var configureFormatStyleButton: UIButton!
     @IBOutlet weak var formatStringRenamingSwitchOutlet: UISwitch!
     @IBOutlet weak var goToNextSongWhenEditingSwitchOutlet: UISwitch!
+    @IBOutlet weak var deleteAllSongsButton: UIButton!
     
-    var switchStateForGoingToTheNextSong = false
-    var switchStateForRenamingFilesAutomatically = false
+    //    var switchStateForGoingToTheNextSong = false
+    //    var switchStateForRenamingFilesAutomatically = false
     
     let switchKeyForGoingToTheNextSong = "goToNextSongSwitchState"
     let switchKeyForRenamingFilesAutomatically = "renameFilesAutomaticallySwitchState"
@@ -104,10 +105,32 @@ class Settings: UITableViewController {
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let nextVC = segue.destination as? RestoreDefaultSettings {
+            nextVC.delegate = self
+        } else {
+            dismiss(animated: true, completion: {})
+        }
+    }
+    
+    func didRestoreSettings(){
+        formatStringRenamingSwitchOutlet.setOn(false, animated: true)
+        goToNextSongWhenEditingSwitchOutlet.setOn(false, animated: true)
+        UserDefaults.standard.set(goToNextSongWhenEditingSwitchOutlet.isOn, forKey: "goToNextSongSwitchState")
+        UserDefaults.standard.set(formatStringRenamingSwitchOutlet.isOn, forKey: "renameFilesAutomaticallySwitchState")
+        selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+        selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
+        selectFormatStringCell.isUserInteractionEnabled = false
+        configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+        configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
+        configureFormatStyleCell.isUserInteractionEnabled = false
+    }
+    
     @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
         if let sourceViewController = sender.source as? ReplaceStrings {
         }
     }
+    
     
     @IBAction func loadSongs(_ sender: UIButton) {
         
@@ -871,5 +894,13 @@ class Settings: UITableViewController {
             realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50])
         }
         print("song loading complete")
+    }
+    
+    @IBAction func deleteAllSongs(_ sender: UIButton) {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.deleteAll()
+        }
+        print("song deleting complete")
     }
 }

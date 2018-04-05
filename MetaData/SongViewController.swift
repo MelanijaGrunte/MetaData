@@ -168,7 +168,7 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
                         nextSongVC.selectedIndex = selectedIndex
                         nextSongVC.tableSongs = tableSongs
                         if timesPressedSave == nil {
-                            nextSongVC.timesPressedSave = 3
+                            nextSongVC.timesPressedSave = 1
                         } else {
                             nextSongVC.timesPressedSave = timesPressedSave! + 1
                         }

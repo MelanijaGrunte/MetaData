@@ -71,6 +71,8 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         
         separation.delegate = self
         
+        unknownTagReplacement.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        
         customReplacement.delegate = self
         customReplacement.returnKeyType = UIReturnKeyType.done
         customReplacement.addTarget(self, action: #selector(CustomFormatString.textFieldDidChange(_:)),
@@ -186,7 +188,11 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
             }
             
             let whatSeparates = Separation()
-            whatSeparates.separationText = separation.text!
+            if separation.text != "" {
+                whatSeparates.separationText = separation.text!
+            } else {
+                whatSeparates.separationText = " "
+            }
             try! realm.write {
                 realm.add(whatSeparates)
             }
