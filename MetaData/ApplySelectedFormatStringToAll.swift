@@ -31,9 +31,12 @@ class ApplySelectedFormatStringToAll: UIViewController {
 
         try! realm.write {
             for songs in realm.objects(Song.self) {
+                print("a")
+
                 SongNameFormatter().renamingFilenames(for: songs)
             }
         }
+        print("2")
 
         dismiss(animated: true, completion: nil)
     }

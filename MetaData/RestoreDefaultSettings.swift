@@ -32,44 +32,45 @@ class RestoreDefaultSettings: UIViewController {
     
     @IBAction func restoreSettings(_ sender: Any) {
         let realm = try! Realm()
-        
+
         //go to next song when finished editing switch
-        let segueIdentifier = SegueIdentifier()
+        let segueIdentifier = realm.objects(SegueIdentifier.self)
         try! realm.write {
-            segueIdentifier.identifier = "unwindToSongTVC"
+            segueIdentifier.setValue("unwindToSongTVC", forKeyPath: "identifier")
         }
         
         // sort files by
-        let attribute = Attribute()
+        let attribute = realm.objects(Attribute.self)
         try! realm.write {
-            attribute.choice = "filename"
+            attribute.setValue("filename", forKeyPath: "choice")
         }
         
         // choose column attribute
-        let column = Column()
+        let column = realm.objects(Column.self)
         try! realm.write {
-            column.choice = "filename"
+            column.setValue("filename", forKeyPath: "choice")
         }
         
         // rename files automatically
-        let automaticFileRenaming = AutomaticFileRenaming()
+        let automaticFileRenaming = realm.objects(AutomaticFileRenaming.self)
         try! realm.write {
-            automaticFileRenaming.automatically = false
+            automaticFileRenaming.setValue(false, forKeyPath: "automatically")
         }
         
         // custom format string
-        let customFormatStringStyle = CustomFormatStringStyle()
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         try! realm.write {
-            customFormatStringStyle.stringStyle = ""
-            customFormatStringStyle.separationText = " "
-            customFormatStringStyle.tagReplacement = "unknown"
+            customFormatStringStyle.setValue("", forKeyPath: "stringStyle")
+            customFormatStringStyle.setValue(" ", forKeyPath: "separationText")
+            customFormatStringStyle.setValue("unknown", forKeyPath: "tagReplacement")
         }
 
         // select custom format string
-        let fileRenamingChoice = FileRenamingChoice()
+        let fileRenamingChoice = realm.objects(FileRenamingChoice.self)
         try! realm.write {
-            fileRenamingChoice.chosenStyle = "{filename}"
-            fileRenamingChoice.chosenTag = -1
+            fileRenamingChoice.setValue("{filename}", forKeyPath: "chosenStyle")
+            fileRenamingChoice.setValue(-1, forKeyPath: "chosenTag")
+
         }
 
         delegate.didRestoreSettings()

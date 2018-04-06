@@ -41,11 +41,11 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     @IBAction func formatStringRenamingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
-        let automaticFileRenaming = AutomaticFileRenaming()
+        let automaticFileRenaming = realm.objects(AutomaticFileRenaming.self)
 
         if (sender.isOn == true) {
             try! realm.write {
-                automaticFileRenaming.automatically = true
+                automaticFileRenaming.setValue(true, forKeyPath: "automatically")
             }
 //            selectFormatStringCell.backgroundColor = UIColor.white
 //            selectFormatStringButton.setTitleColor(.black, for: .normal)
@@ -59,7 +59,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         }
         if (sender.isOn == false) {
             try! realm.write {
-                automaticFileRenaming.automatically = false
+                automaticFileRenaming.setValue(false, forKeyPath: "automatically")
             }
 //            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
 //            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
@@ -76,15 +76,16 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     @IBAction func goToNextSongWhenEditingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
-        let segueIdentifier = SegueIdentifier()
+        let segueIdentifier = realm.objects(SegueIdentifier.self)
+
         if (sender.isOn == true) {
             try! realm.write {
-                segueIdentifier.identifier = "segueToNextSongVC"
+                segueIdentifier.setValue("segueToNextSongVC", forKeyPath: "identifier")
             }
         }
         if (sender.isOn == false) {
             try! realm.write {
-                segueIdentifier.identifier = "unwindToSongTVC"
+                segueIdentifier.setValue("unwindToSongTVC", forKeyPath: "identifier")
             }
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)

@@ -116,10 +116,11 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let type = types[indexPath.row]
         let realm = try! Realm()
-        let fileRenamingChoice = FileRenamingChoice()
+
+        let fileRenamingChoice = realm.objects(FileRenamingChoice.self)
         try! realm.write {
-            fileRenamingChoice.chosenStyle = filenameString(for: type)
-            fileRenamingChoice.chosenTag = indexPath.row
+            fileRenamingChoice.setValue(filenameString(for: type), forKeyPath: "chosenStyle")
+            fileRenamingChoice.setValue(indexPath.row, forKeyPath: "chosenTag")
         }
 
         for row in 0...8 {

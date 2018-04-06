@@ -87,9 +87,9 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)  {
         let type = attributes[indexPath.row]
         let realm = try! Realm()
-        let attribute = Attribute()
+        let attribute = realm.objects(Attribute.self)
         try! realm.write {
-            attribute.choice = attributeChoice(for: type)
+            attribute.setValue(attributeChoice(for: type), forKeyPath: "choice")
         }
         tableView.reloadData()
         dismiss(animated: true, completion: nil)

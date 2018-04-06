@@ -85,11 +85,11 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let type = columns[indexPath.row]
         let realm = try! Realm()
-        let column = Column()
+        let column = realm.objects(Column.self)
         try! realm.write {
-            column.choice = columnChoice(for: type)
+            column.setValue(columnChoice(for: type), forKeyPath: "choice")
         }
-        
+
         tableView.reloadData()
         dismiss(animated: true, completion: nil)
     }

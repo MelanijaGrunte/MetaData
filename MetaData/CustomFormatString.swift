@@ -64,7 +64,6 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     let tags: [CheckBoxes] = [.title, .artist, .album, .track, .discnumber, .year, .genre, .composer, .comment, .albumArtist]
 
     let realm = try! Realm()
-    let style = CustomFormatStringStyle()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,8 +88,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
 
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         try! realm.write {
-            style.tagReplacement = "unknown"
+            customFormatStringStyle.setValue("unknown", forKeyPath: "tagReplacement")
         }
     }
     
@@ -101,8 +101,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
 
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         try! realm.write {
-            style.tagReplacement = "empty"
+            customFormatStringStyle.setValue("empty", forKeyPath: "tagReplacement")
         }
     }
     
@@ -113,8 +114,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
 
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         try! realm.write {
-            style.tagReplacement = "unchanged filename"
+            customFormatStringStyle.setValue("unchanged filename", forKeyPath: "tagReplacement")
         }
     }
     
@@ -125,8 +127,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         noReplacementSelection.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         customLabel.font = UIFont.boldSystemFont(ofSize: 15)
 
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         try! realm.write {
-            style.tagReplacement = customReplacement.text!
+            customFormatStringStyle.setValue(customReplacement.text!, forKeyPath: "tagReplacement")
         }
     }
     
@@ -165,6 +168,7 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     }
     
     func createFormatString () {
+        let customFormatStringStyle = realm.objects(CustomFormatStringStyle.self)
         if chosenTags.count > 0 {
             var result = "\(chosenTags[0])"
             for element in 1..<chosenTags.count {
@@ -172,16 +176,15 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
                 result = result + repeatingString
             }
             try! realm.write {
-                style.stringStyle = result
+                customFormatStringStyle.setValue(result, forKeyPath: "stringStyle")
             }
             if separation.text != "" {
-
                 try! realm.write {
-                    style.separationText = separation.text!
+                    customFormatStringStyle.setValue(separation.text!, forKeyPath: "separationText")
                 }
             } else {
                 try! realm.write {
-                    style.separationText = " "
+                    customFormatStringStyle.setValue(" ", forKeyPath: "separationText")
                 }
             }
         }
@@ -192,19 +195,21 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
 
         createFormatString ()
 
-        try! realm.write {
-            realm.add(style)
-        }
+//        try! realm.write {
+//            realm.add(customFormatStringStyle)
+//        }
 
-        var fileRenamingChoice: Results<FileRenamingChoice>?
-        fileRenamingChoice = realm.objects(FileRenamingChoice.self)
-        let format = fileRenamingChoice?.last
+        var fileRenamingChoice: Results<FileRenamingChoice> //////////////
+        fileRenamingChoice = realm.objects(FileRenamingChoice.self) //////////////
+        let format = fileRenamingChoice.last
+
+        var customFormatStringStyle: Results<CustomFormatStringStyle> //////////////
+        customFormatStringStyle = realm.objects(CustomFormatStringStyle.self) //////////////
+        let style = customFormatStringStyle.last
 
         if format?.chosenTag == 8 {
-            let fileRenamingChoice = FileRenamingChoice()
-            fileRenamingChoice.chosenStyle = style.stringStyle
             try! realm.write {
-                realm.add(formatString)
+                fileRenamingChoice.setValue(style?.stringStyle, forKey: "chosenStyle")
             }
         }
 
