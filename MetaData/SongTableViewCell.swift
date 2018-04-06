@@ -17,10 +17,6 @@ class SongTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        //        if albumArtImage.image == nil {
-        //            albumArtImage.image = UIImage(named: "defaultnoalbumart")
-        //        }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

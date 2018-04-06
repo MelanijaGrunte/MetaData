@@ -79,128 +79,23 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return types.count;
     }
-    
-    // MARK: actions
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let type = types[indexPath.row]
-        let realm = try! Realm()
-        
-        var whenNoTag: Results<TagReplacement>?
-        whenNoTag = realm.objects(TagReplacement.self)
-        let replacement = whenNoTag?.last
-        
-        var whatSeparates: Results<Separation>?
-        whatSeparates = realm.objects(Separation.self)
-        let separation = whatSeparates?.last
-        
-        try! realm.write {
-            for songs in realm.objects(Song.self) {
-                
-                let fileInformation: [(chosenAttribute: String, attributeValue: String, unknownAttribute: String)] = [
-                    ("{titleDescription}", songs.titleDescription, "unknown title"),
-                    ("{albumArtistDescription}", songs.albumArtistDescription, "unknown album artist"),
-                    ("{artistDescription}", songs.artistDescription, "unknown artist"),
-                    ("{albumDescription}", songs.albumDescription, "unknown album"),
-                    ("{trackDescription}", songs.trackDescription, "unknown track"),
-                    ("{discnumberDescription}", songs.discnumberDescription, "unknown discnumber"),
-                    ("{yearDescription}", songs.yearDescription, "unknown year"),
-                    ("{genreDescription}", songs.genreDescription, "unknown genre"),
-                    ("{composerDescription}", songs.composerDescription, "unknown composer"),
-                    ("{commentDescription}", songs.commentDescription, "unknown comment")
-                ]
-                
-                var formatString = filenameString(for: type)
-                //                fileInformation.forEach { attribute  in
-                //                formatString = formatString.replacingOccurrences(of: attribute.chosenAttribute, with: attribute.attributeValue) }
-                formatString = formatString.replacingOccurrences(of: "{titleDescription}", with: songs.titleDescription)
-                formatString = formatString.replacingOccurrences(of: "{albumArtistDescription}", with: songs.albumArtistDescription)
-                formatString = formatString.replacingOccurrences(of: "{artistDescription}", with: songs.artistDescription)
-                formatString = formatString.replacingOccurrences(of: "{albumDescription}", with: songs.albumDescription)
-                formatString = formatString.replacingOccurrences(of: "{trackDescription}", with: songs.trackDescription)
-                formatString = formatString.replacingOccurrences(of: "{discnumberDescription}", with: songs.discnumberDescription)
-                formatString = formatString.replacingOccurrences(of: "{yearDescription}", with: songs.yearDescription)
-                formatString = formatString.replacingOccurrences(of: "{genreDescription}", with: songs.genreDescription)
-                formatString = formatString.replacingOccurrences(of: "{composerDescription}", with: songs.composerDescription)
-                formatString = formatString.replacingOccurrences(of: "{commentDescription}", with: songs.commentDescription)
-                
-                // custom format string stylam
-                if type == types[8] {
-                    if formatString == "" {
-                        print("Custom format string has not been made!")
-                        break
-                    }
-                    
-                    // ja ir izvēlēts, lai dziesmas, kurām nav kāds no izvēlētajiem atribūtiem, nemaina filename nosaukumu
-                    if replacement?.tagReplacement == "unchanged filename" && formatString.range(of: "unknown") != nil {
-                        print("\"\(songs.filename)\" will not be changed")
-                    } else {
-                        songs.filename = formatString
-                    }
-                    // ja ir izvēlēts unknown %tag% vietā atstāt tukšu
-                    if replacement?.tagReplacement == "empty" {
-                        fileInformation.forEach { attribute  in
-                            songs.filename = songs.filename.replacingOccurrences(of: attribute.unknownAttribute, with: "")
-                        }
-                    }
-                    // ja ir izvēlēts custom tag replacement
-                    if replacement?.tagReplacement != "empty" && replacement?.tagReplacement != "unchanged filename" && replacement?.tagReplacement != "unknown" && replacement?.tagReplacement != "" && replacement?.tagReplacement != nil {
-                        fileInformation.forEach { attribute  in
-                            songs.filename = songs.filename.replacingOccurrences(of: attribute.unknownAttribute, with: (replacement?.tagReplacement)!)
-                        }
-                    }
-                    // ja fails ir bez atribūtiem, tad " - - - - - " vietā ieliek "unknown filename"
-                    for attributeCount in 1...10 {
-                        let onlySeparations = String(repeating: " \(separation!.separationText) ", count: attributeCount)
-                        if songs.filename == onlySeparations {
-                            songs.filename = "unknown filename"
-                            // vienīgi teorētiski, ja tie ir filename, tad nevar būt vienādi failu nosaukumi.
-                        }
-                        // ja fails ir bez atribūtiem, bet to vietā ir kkāds replacement, tad "unknown title - unknown album - unknown track" vietā ieliek ieliek "unknown filename"
-                        if replacement?.tagReplacement != " " || replacement?.tagReplacement != "" || replacement?.tagReplacement != nil {
-                            var onlyReplacement = "\((replacement?.tagReplacement))"
-                            let repeatingString = " \(separation!.separationText) \((replacement?.tagReplacement))"
-                            for _ in 1..<10 {
-                                if songs.filename == onlyReplacement {
-                                    songs.filename = "unknown filename"
-                                }
-                                onlyReplacement = onlyReplacement + repeatingString
-                            } }
-                    }
-                    // ja ir izlaidies kāds atribūts un ir vairāki separationi
-                    var nearbySeparations = "\(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)  \(separation!.separationText)"
-                    for _ in 1...7 {
-                        songs.filename = songs.filename.replacingOccurrences(of: nearbySeparations, with: "\(separation!.separationText)")
-                        
-                        let lessSeparations = "  \(separation!.separationText)".count
-                        nearbySeparations = String(nearbySeparations.dropLast(lessSeparations))
-                    }
-                    // ja dziesma sākas ar separationu, jo kāds atribūts ir bijis tukšs
-                    if songs.filename.hasPrefix(" \(separation!.separationText)") { // true
-                        let redundantPrefix = separation!.separationText.count + 1
-                        songs.filename = String(songs.filename.dropFirst(redundantPrefix))
-                    }
-                    // ja dziesma beidzas ar separationu, jo kāds atribūts ir bijis tukšs
-                    if songs.filename.hasSuffix("\(separation!.separationText) ") { // true
-                        let redundantSuffix = separation!.separationText.count + 1
-                        songs.filename = String(songs.filename.dropLast(redundantSuffix))
-                    }
-                } else {
-                    songs.filename = formatString
-                }
-            }
-        }
-        tableView.reloadData()
-        dismiss(animated: true, completion: nil)
-    }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
         cell.textLabel?.text = types[indexPath.row].rawValue
         cell.textLabel?.font = cell.textLabel?.font.withSize(20)
-        
+
         let realm = try! Realm()
+
+        var fileRenamingChoice: Results<FileRenamingChoice>?
+        fileRenamingChoice = realm.objects(FileRenamingChoice.self)
+        let format = fileRenamingChoice?.last
+
+        if indexPath == IndexPath(row: (format?.chosenTag)!, section: 0) {
+            cell.accessoryType = UITableViewCellAccessoryType.checkmark
+        }
+
         var customFormatString: Results<CustomFormatStringStyle>?
         customFormatString = realm.objects(CustomFormatStringStyle.self)
         let style = customFormatString?.last
@@ -214,6 +109,28 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
             return customStringStyleCell
         }
         return cell
+    }
+    
+    // MARK: actions
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let type = types[indexPath.row]
+        let realm = try! Realm()
+        let formatString = FileRenamingChoice()
+        formatString.chosenStyle = filenameString(for: type)
+        formatString.chosenTag = indexPath.row
+        try! realm.write {
+            realm.add(formatString)
+        }
+
+        for row in 0...8 {
+            tableView.cellForRow(at: IndexPath(row: row, section: 0))?.accessoryType = UITableViewCellAccessoryType.none
+        }
+
+        tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCellAccessoryType.checkmark
+
+        tableView.reloadData()
+        dismiss(animated: true, completion: nil)
     }
 }
 

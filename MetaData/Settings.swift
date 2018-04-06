@@ -48,30 +48,30 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
             try! realm.write {
                 realm.add(renamingStyleChoice)
             }
-            selectFormatStringCell.backgroundColor = UIColor.white
-            selectFormatStringButton.setTitleColor(.black, for: .normal)
-            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.none
-            selectFormatStringCell.isUserInteractionEnabled = true
-            
-            configureFormatStyleCell.backgroundColor = UIColor.white
-            configureFormatStyleButton.setTitleColor(.black, for: .normal)
-            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.none
-            configureFormatStyleCell.isUserInteractionEnabled = true
+//            selectFormatStringCell.backgroundColor = UIColor.white
+//            selectFormatStringButton.setTitleColor(.black, for: .normal)
+//            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.none
+//            selectFormatStringCell.isUserInteractionEnabled = true
+//
+//            configureFormatStyleCell.backgroundColor = UIColor.white
+//            configureFormatStyleButton.setTitleColor(.black, for: .normal)
+//            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.none
+//            configureFormatStyleCell.isUserInteractionEnabled = true
         }
         if (sender.isOn == false) {
             renamingStyleChoice.automatically = false
             try! realm.write {
                 realm.add(renamingStyleChoice)
             }
-            //            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
-            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
-            selectFormatStringCell.isUserInteractionEnabled = false
-            
-            //            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
-            configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
-            configureFormatStyleCell.isUserInteractionEnabled = false
+//            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+//            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+//            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
+//            selectFormatStringCell.isUserInteractionEnabled = false
+//
+//            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
+//            configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+//            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
+//            configureFormatStyleCell.isUserInteractionEnabled = false
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForRenamingFilesAutomatically)
     }
@@ -118,12 +118,12 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         goToNextSongWhenEditingSwitchOutlet.setOn(false, animated: true)
         UserDefaults.standard.set(goToNextSongWhenEditingSwitchOutlet.isOn, forKey: "goToNextSongSwitchState")
         UserDefaults.standard.set(formatStringRenamingSwitchOutlet.isOn, forKey: "renameFilesAutomaticallySwitchState")
-        selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-        selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
-        selectFormatStringCell.isUserInteractionEnabled = false
-        configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-        configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
-        configureFormatStyleCell.isUserInteractionEnabled = false
+//        selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+//        selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
+//        selectFormatStringCell.isUserInteractionEnabled = false
+//        configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
+//        configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
+//        configureFormatStyleCell.isUserInteractionEnabled = false
     }
     
     @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
@@ -897,9 +897,12 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     }
     
     @IBAction func deleteAllSongs(_ sender: UIButton) {
+
         let realm = try! Realm()
+        let songs = realm.objects(Song.self)
+
         try! realm.write {
-            realm.deleteAll()
+            realm.delete(songs)
         }
         print("song deleting complete")
     }

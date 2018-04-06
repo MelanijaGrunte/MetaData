@@ -11,7 +11,7 @@ import os.log
 import RealmSwift
 
 class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource {
-    
+
     @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var separation: UITextField!
     @IBOutlet weak var tagCollectionView: UICollectionView!
@@ -62,10 +62,13 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     }
     
     let tags: [CheckBoxes] = [.title, .artist, .album, .track, .discnumber, .year, .genre, .composer, .comment, .albumArtist]
-    
+
+    let realm = try! Realm()
+    let style = CustomFormatStringStyle()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tagCollectionView.delegate = self
         tagCollectionView.dataSource = self
         
@@ -85,12 +88,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         noReplacementSelection.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
-        
-        let realm = try! Realm()
-        let whenNoTag = TagReplacement()
-        whenNoTag.tagReplacement = "unknown"
+
         try! realm.write {
-            realm.add(whenNoTag)
+            style.tagReplacement = "unknown"
         }
     }
     
@@ -100,12 +100,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         noReplacementSelection.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
-        
-        let realm = try! Realm()
-        let whenNoTag = TagReplacement()
-        whenNoTag.tagReplacement = "empty"
+
         try! realm.write {
-            realm.add(whenNoTag)
+            style.tagReplacement = "empty"
         }
     }
     
@@ -115,12 +112,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         unknownTagReplacement.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         customLabel.font = UIFont.systemFont(ofSize: 15)
         customReplacement.text = nil
-        
-        let realm = try! Realm()
-        let whenNoTag = TagReplacement()
-        whenNoTag.tagReplacement = "unchanged filename"
+
         try! realm.write {
-            realm.add(whenNoTag)
+            style.tagReplacement = "unchanged filename"
         }
     }
     
@@ -130,12 +124,9 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         unknownTagReplacement.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         noReplacementSelection.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         customLabel.font = UIFont.boldSystemFont(ofSize: 15)
-        
-        let realm = try! Realm()
-        let whenNoTag = TagReplacement()
-        whenNoTag.tagReplacement = customReplacement.text!
+
         try! realm.write {
-            realm.add(whenNoTag)
+            style.tagReplacement = customReplacement.text!
         }
     }
     
@@ -174,41 +165,49 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     }
     
     func createFormatString () {
-        let realm = try! Realm()
-        let customFormatString = CustomFormatStringStyle()
         if chosenTags.count > 0 {
             var result = "\(chosenTags[0])"
             for element in 1..<chosenTags.count {
                 let repeatingString = " \(separation.text!) \(chosenTags[element])"
                 result = result + repeatingString
             }
-            customFormatString.stringStyle = result
             try! realm.write {
-                realm.add(customFormatString)
+                style.stringStyle = result
             }
-            
-            let whatSeparates = Separation()
             if separation.text != "" {
-                whatSeparates.separationText = separation.text!
+
+                try! realm.write {
+                    style.separationText = separation.text!
+                }
             } else {
-                whatSeparates.separationText = " "
-            }
-            try! realm.write {
-                realm.add(whatSeparates)
+                try! realm.write {
+                    style.separationText = " "
+                }
             }
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        
+
         createFormatString ()
-        
-        let realm = try! Realm()
-        var customFormatString: Results<CustomFormatStringStyle>?
-        customFormatString = realm.objects(CustomFormatStringStyle.self)
-        let style = customFormatString?.last
-        
+
+        try! realm.write {
+            realm.add(style)
+        }
+
+        var fileRenamingChoice: Results<FileRenamingChoice>?
+        fileRenamingChoice = realm.objects(FileRenamingChoice.self)
+        let format = fileRenamingChoice?.last
+
+        if format?.chosenTag == 8 {
+            let formatString = FileRenamingChoice()
+            formatString.chosenStyle = style.stringStyle
+            try! realm.write {
+                realm.add(formatString)
+            }
+        }
+
         guard let button = sender as? UIBarButtonItem, button === saveButton else {
             os_log("The save button was not pressed, cancelling", log: OSLog.default, type: .debug)
             return }

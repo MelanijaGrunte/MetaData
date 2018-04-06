@@ -136,14 +136,15 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
                 self.song!.albumArtImage = NSData(data: UIImagePNGRepresentation(albumArtImage.image!)!) as Data? 
             } else {
                 self.song!.albumArtImage = nil }
-            self.song!.albumArtist = albumArtistText.text ?? nil } // probleema ka ja nekaa nav tad saglabaajas kaa tuksh un nestraadaa unknown artist
+            self.song!.albumArtist = albumArtistText.text ?? nil }
         
         var isAutomatic: Results<AutomaticFileRenaming>?
         isAutomatic = realm.objects(AutomaticFileRenaming.self)
         if let aut = isAutomatic?.last {
             if aut.automatically == true {
-                // make self.song!.filename change accordingly to FileRenamingChoice
-                // SelectFormatString.renameFilenames(to: ) blah blah blah
+                try! realm.write {
+                        SongNameFormatter().renamingFilenames(for: self.song!)
+                }
             }
         }
         

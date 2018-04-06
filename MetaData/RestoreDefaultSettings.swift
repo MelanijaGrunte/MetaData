@@ -21,7 +21,6 @@ class RestoreDefaultSettings: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         confirmationLabel.numberOfLines = 0
         restoreDefaultSettingsPopUp.layer.cornerRadius = 10
         restoreDefaultSettingsPopUp.layer.masksToBounds = true
@@ -65,10 +64,20 @@ class RestoreDefaultSettings: UIViewController {
         // custom format string
         let customFormatString = CustomFormatStringStyle()
         customFormatString.stringStyle = ""
+        customFormatString.separationText = " "
+        customFormatString.tagReplacement = "unknown"
         try! realm.write {
             realm.add(customFormatString)
         }
-        
+
+        // select custom format string
+        let formatString = FileRenamingChoice()
+        formatString.chosenStyle = "{filename}"
+        formatString.chosenTag = -1
+        try! realm.write {
+            realm.add(formatString)
+        }
+
         delegate.didRestoreSettings()
         dismiss(animated: true, completion: nil)
     }

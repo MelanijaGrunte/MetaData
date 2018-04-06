@@ -19,13 +19,7 @@ class Column: Object {
 
 class CustomFormatStringStyle: Object {
     @objc dynamic var stringStyle: String = ""
-}
-
-class TagReplacement: Object {
-    @objc dynamic var tagReplacement: String = ""
-}
-
-class Separation: Object {
+    @objc dynamic var tagReplacement: String = "unknown"
     @objc dynamic var separationText: String = " "
 }
 
@@ -37,6 +31,7 @@ class AutomaticFileRenaming: Object {
     @objc dynamic var automatically: Bool = false
 }
 
-//class FileRenamingChoice: Object {
-//    @objc dynamic var chosenStyle: Int = 1
-//}
+class FileRenamingChoice: Object {
+    @objc dynamic var chosenTag: Int = -1
+    @objc dynamic var chosenStyle: String = "{filename}"
+}

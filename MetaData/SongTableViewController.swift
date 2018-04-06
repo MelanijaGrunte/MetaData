@@ -87,26 +87,21 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
             var attribute: Results<Attribute>?
             attribute = realm.objects(Attribute.self)
             if let attr = attribute?.last {
-                displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true)])
+                displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true), "filename"])
             } else {
                 displayedSongs = songs.sorted(byKeyPath: "filename")
             }
         }
         if searchText == "" {
-            // ja nospiež x
-            searchBar.endEditing(true)      // ir taa stulbaa zilaa mirgojoshaa liinija
-            // searchBarShouldEndEditing(searchBar)
             loadSampleSongs()
         }
         self.tableView.reloadData()
     }
     
     @IBAction func searchButton(_ sender: UIBarButtonItem) {
-        //presentViewController(searchController, animated: true, completion: nil)
         tableView.setContentOffset(CGPoint(x: 0, y: -64), animated: true)   ///// mooooore!
     }
-    
-    
+
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -156,12 +151,10 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
     private func loadSampleSongs() {
         let realm = try! Realm()
         let songs = realm.objects(Song.self)
-        
         var attribute: Results<Attribute>?
         attribute = realm.objects(Attribute.self)
         if let attr = attribute?.last {
-            displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true)])
-            
+            displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true), "filename"])
         } else {
             displayedSongs = songs.sorted(byKeyPath: "filename")
         }

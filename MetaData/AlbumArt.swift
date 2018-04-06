@@ -25,9 +25,7 @@ class AlbumArt: UIViewController {
         super.viewDidLoad()
         
         if image != nil {
-            bigAlbumArt.image = image
-            //albumArtfilename.text = song.albumArtImage
-            
+            bigAlbumArt.image = image            
             view.backgroundColor = .clear // In order for the UIVisualEffectView to actually blur the content, its superview must be transparent. To do this, you change the background color to be clear.
             let blurEffect = UIBlurEffect(style: .dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
