@@ -34,48 +34,42 @@ class RestoreDefaultSettings: UIViewController {
         let realm = try! Realm()
         
         //go to next song when finished editing switch
-        let segueChoice = SegueIdentifier()
-        segueChoice.identifier = "unwindToSongTVC"
+        let segueIdentifier = SegueIdentifier()
         try! realm.write {
-            realm.add(segueChoice)
+            segueIdentifier.identifier = "unwindToSongTVC"
         }
         
         // sort files by
         let attribute = Attribute()
-        attribute.choice = "filename"
         try! realm.write {
-            realm.add(attribute)
+            attribute.choice = "filename"
         }
         
         // choose column attribute
         let column = Column()
-        column.choice = "filename"
         try! realm.write {
-            realm.add(column)
+            column.choice = "filename"
         }
         
         // rename files automatically
-        let fileRenaming = AutomaticFileRenaming()
-        fileRenaming.automatically = false
+        let automaticFileRenaming = AutomaticFileRenaming()
         try! realm.write {
-            realm.add(fileRenaming)
+            automaticFileRenaming.automatically = false
         }
         
         // custom format string
-        let customFormatString = CustomFormatStringStyle()
-        customFormatString.stringStyle = ""
-        customFormatString.separationText = " "
-        customFormatString.tagReplacement = "unknown"
+        let customFormatStringStyle = CustomFormatStringStyle()
         try! realm.write {
-            realm.add(customFormatString)
+            customFormatStringStyle.stringStyle = ""
+            customFormatStringStyle.separationText = " "
+            customFormatStringStyle.tagReplacement = "unknown"
         }
 
         // select custom format string
-        let formatString = FileRenamingChoice()
-        formatString.chosenStyle = "{filename}"
-        formatString.chosenTag = -1
+        let fileRenamingChoice = FileRenamingChoice()
         try! realm.write {
-            realm.add(formatString)
+            fileRenamingChoice.chosenStyle = "{filename}"
+            fileRenamingChoice.chosenTag = -1
         }
 
         delegate.didRestoreSettings()

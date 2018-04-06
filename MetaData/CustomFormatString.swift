@@ -201,8 +201,8 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         let format = fileRenamingChoice?.last
 
         if format?.chosenTag == 8 {
-            let formatString = FileRenamingChoice()
-            formatString.chosenStyle = style.stringStyle
+            let fileRenamingChoice = FileRenamingChoice()
+            fileRenamingChoice.chosenStyle = style.stringStyle
             try! realm.write {
                 realm.add(formatString)
             }

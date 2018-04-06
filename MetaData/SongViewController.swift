@@ -49,6 +49,7 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     var timesPressedSave: Int?
     var removeAlbumArtImage: Bool?
     var delegate: SongVCDelegate?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -148,13 +149,15 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
             }
         }
         
-        var segueChoice: Results<SegueIdentifier>?
-        segueChoice = realm.objects(SegueIdentifier.self)
-        if let seg = segueChoice?.last {
+        let segueChoice = realm.objects(SegueIdentifier.self)
+        if let seg = segueChoice.last {
             
             if seg.identifier == "unwindToSongTVC" {
+                print("stage1.2 ne")
                 self.navigationController?.popViewController(animated: true)
+                print("stage2.2 ne")
                 delegate?.didFinishSongVC(controller: self)
+                print("stage3.2 ne")
             }
             if seg.identifier == "segueToNextSongVC" {
                 if ((selectedIndex! + 1) < tableSongs.count) {
@@ -179,8 +182,14 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
                         navController.setViewControllers(stack, animated: false) // boom!
                     }
                 } else {
+                    print("stage1.2")
                     self.navigationController?.popViewController(animated: true)
+                    print("stage2.2")
+//                    delegate?.didFinishMultipleSongVC()
+                    print("stage3.2")
                     delegate?.didFinishSongVC(controller: self)
+                    print("stage4.2")
+
                 }
             }
         }
@@ -188,12 +197,20 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     @IBAction func cancelIsTapped(_ sender: UIBarButtonItem) {
         if timesPressedSave != nil {
+            print("stage1.1")
             self.navigationController?.popViewController(animated: true)
+            print("stage2.1")
+//            delegate?.didFinishMultipleSongVC()
+            print("stage3.1")
             delegate?.didFinishSongVC(controller: self)
+            print("stage4.1")
         }
         else {
+            print("stage1.1 ne")
             self.navigationController?.popViewController(animated: true)
+            print("stage2.1 ne")
             delegate?.didFinishSongVC(controller: self)
+            print("stage3.1 ne")
         }
     }
     
@@ -236,4 +253,5 @@ func optionalStringToInt(string: String?) -> Int? {
 
 protocol SongVCDelegate {
     func didFinishSongVC(controller: SongViewController)
+//    func didFinishMultipleSongVC()
 }

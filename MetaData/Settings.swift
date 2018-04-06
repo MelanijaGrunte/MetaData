@@ -41,12 +41,11 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     @IBAction func formatStringRenamingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
-        let renamingStyleChoice = AutomaticFileRenaming()
-        
+        let automaticFileRenaming = AutomaticFileRenaming()
+
         if (sender.isOn == true) {
-            renamingStyleChoice.automatically = true
             try! realm.write {
-                realm.add(renamingStyleChoice)
+                automaticFileRenaming.automatically = true
             }
 //            selectFormatStringCell.backgroundColor = UIColor.white
 //            selectFormatStringButton.setTitleColor(.black, for: .normal)
@@ -59,9 +58,8 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
 //            configureFormatStyleCell.isUserInteractionEnabled = true
         }
         if (sender.isOn == false) {
-            renamingStyleChoice.automatically = false
             try! realm.write {
-                realm.add(renamingStyleChoice)
+                automaticFileRenaming.automatically = false
             }
 //            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
 //            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
@@ -78,18 +76,15 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     @IBAction func goToNextSongWhenEditingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
+        let segueIdentifier = SegueIdentifier()
         if (sender.isOn == true) {
-            let segueChoice = SegueIdentifier()
-            segueChoice.identifier = "segueToNextSongVC"
             try! realm.write {
-                realm.add(segueChoice)
+                segueIdentifier.identifier = "segueToNextSongVC"
             }
         }
         if (sender.isOn == false) {
-            let segueChoice = SegueIdentifier()
-            segueChoice.identifier = "unwindToSongTVC"
             try! realm.write {
-                realm.add(segueChoice)
+                segueIdentifier.identifier = "unwindToSongTVC"
             }
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)

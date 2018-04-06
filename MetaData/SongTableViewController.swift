@@ -24,9 +24,9 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         super.viewDidLoad()
         
         loadSampleSongs()
-        
-        searchBar.delegate = self
-        searchBar.returnKeyType = UIReturnKeyType.done
+
+        //searchBar.delegate = self
+        // searchBar.returnKeyType = UIReturnKeyType.done
         //navigationItem.hidesSearchBarWhenScrolling = false // nestrādā, bet īstenībā good point. varbūt kko tādu vajadzētu
         
         self.tableView.reloadData()
@@ -49,9 +49,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         }
         let song = displayedSongs[indexPath.row]
         let realm = try! Realm()
-        var columnAttribute: Results<Column>?
-        columnAttribute = realm.objects(Column.self)
-        if let column = columnAttribute?.last {
+        let columnAttribute = realm.objects(Column.self)
+        if let column = columnAttribute.last {
             cell.columnAttribute.textColor = UIColor.black
             cell.columnAttribute.text = song[column.choice] as? String
             if column.choice == "track" || column.choice == "discnumber" || column.choice == "year" {
@@ -84,9 +83,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
             let subVars = ["SRCH": searchQuery]
             let predicate = template.withSubstitutionVariables(subVars)
             let songs = realm.objects(Song.self).filter(predicate)
-            var attribute: Results<Attribute>?
-            attribute = realm.objects(Attribute.self)
-            if let attr = attribute?.last {
+            let attribute = realm.objects(Attribute.self)
+            if let attr = attribute.last {
                 displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true), "filename"])
             } else {
                 displayedSongs = songs.sorted(byKeyPath: "filename")
@@ -105,10 +103,18 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+        print("Stage in the middle")
         
         let destination = segue.destination as! SongViewController
         destination.segueFromController = "SongTableViewController"
-        
+
+        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let nextSongVC : SongViewController = storyboard.instantiateViewController(withIdentifier: "SongViewController") as! SongViewController
+
+//        let destinationTWO = segue.destination as nextSongVC
+        nextSongVC.delegate = self
+
         super.prepare(for: segue, sender: sender)
         switch(segue.identifier ?? "") {
         case "ShowDetail":
@@ -130,18 +136,34 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
             songDetailViewController.delegate = self
         default: ()
         }
+
     }
     
     //MARK: Actions
     
     // rediģētās dziesmas aizstāšana ar veco versiju
     func didFinishSongVC(controller: SongViewController) {
+        print("stage4")
         if let sourceViewController = controller as? SongViewController, let song = sourceViewController.song {
+            print("stage5")
             if let selectedIndexPath = tableView.indexPathForSelectedRow {
+                print("stage6")
                 var array = Array(displayedSongs)
                 array[selectedIndexPath.row] = song
                 loadSampleSongs()
                 tableView.reloadRows(at: [selectedIndexPath], with: .none)
+            } else {
+                print("stage6-but-not")
+                var array = Array(displayedSongs)
+                for element in 0...49 {
+                    array[element] = song
+                    let row = IndexPath(row: element, section: 0)
+                    tableView.reloadRows(at: [row], with: .none)
+                }
+                loadSampleSongs()
+                tableView.reloadData()
+                print("stage7-but-not")
+
             }
         }
     }
@@ -151,9 +173,8 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
     private func loadSampleSongs() {
         let realm = try! Realm()
         let songs = realm.objects(Song.self)
-        var attribute: Results<Attribute>?
-        attribute = realm.objects(Attribute.self)
-        if let attr = attribute?.last {
+        let attribute = realm.objects(Attribute.self)
+        if let attr = attribute.last {
             displayedSongs = songs.sorted(by: [SortDescriptor(keyPath: attr.choice, ascending: true), "filename"])
         } else {
             displayedSongs = songs.sorted(byKeyPath: "filename")

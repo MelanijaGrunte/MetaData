@@ -88,9 +88,8 @@ class SortFilesBy: UIViewController, UITableViewDelegate, UITableViewDataSource 
         let type = attributes[indexPath.row]
         let realm = try! Realm()
         let attribute = Attribute()
-        attribute.choice = attributeChoice(for: type)
         try! realm.write {
-            realm.add(attribute)
+            attribute.choice = attributeChoice(for: type)
         }
         tableView.reloadData()
         dismiss(animated: true, completion: nil)
