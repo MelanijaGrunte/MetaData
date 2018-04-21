@@ -12,8 +12,7 @@ import RealmSwift
 class AlbumArt: UIViewController {
     
     var image: UIImage? = nil
-    // var song: Song?
-    
+
     @IBOutlet weak var bigAlbumArt: UIImageView!
     @IBOutlet weak var albumArtfilename: UILabel!
     
@@ -26,7 +25,7 @@ class AlbumArt: UIViewController {
         
         if image != nil {
             bigAlbumArt.image = image            
-            view.backgroundColor = .clear // In order for the UIVisualEffectView to actually blur the content, its superview must be transparent. To do this, you change the background color to be clear.
+            view.backgroundColor = .clear
             let blurEffect = UIBlurEffect(style: .dark)
             let blurEffectView = UIVisualEffectView(effect: blurEffect)
             blurEffectView.frame = self.view.bounds

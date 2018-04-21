@@ -14,8 +14,6 @@ class SongNameFormatter {
     func renamingFilenames(for songToBeEdited: Song) {
         let realm = try! Realm()
 
-        print("1")
-
         let fileRenamingChoice = realm.objects(FileRenamingChoice.self)
         var chosenFormatStyle = fileRenamingChoice.last
 
@@ -35,9 +33,6 @@ class SongNameFormatter {
             ("{commentDescription}", songToBeEdited.commentDescription, "unknown comment")
         ]
 
-        print("3")
-
-
         var formatStyle = chosenFormatStyle?.chosenStyle
 
         // fileInformation.forEach { attribute  in
@@ -56,7 +51,6 @@ class SongNameFormatter {
 
         // custom format string stylam
         if chosenFormatStyle?.chosenTag == 8 {
-            print("4")
 
             if chosenFormatStyle?.chosenStyle == "" {
                 print("Custom format string has not been made!")

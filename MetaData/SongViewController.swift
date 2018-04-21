@@ -14,6 +14,7 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     //MARK: Properties
     
+    @IBOutlet var contentView: UIView!
     @IBOutlet weak var filenameLabel: UILabel!
     @IBOutlet weak var filenameText: UITextField!
     @IBOutlet weak var titleLabel: UILabel!
@@ -39,11 +40,12 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var albumArtistLabel: UILabel!
     @IBOutlet weak var albumArtistText: UITextField!
     @IBOutlet weak var saveButton: UIBarButtonItem!
-    
+    @IBOutlet weak var chooseAlbumArtButtonOutlet: UIButton!
+
     let realm = try! Realm()
     var song: Song?
     var segueFromController = "SongViewController"
-    var segueIdentifier = "segueToSongTableVC"
+    var segueIdentifier = "unwindToSongTVC"
     var selectedIndex: Int? // labi
     var tableSongs: Results<Song>!
     var timesPressedSave: Int?
@@ -53,8 +55,40 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        noPhotoSelectedImage.image = UIImage(named: "defaultnophotoselected")
+
+        let foregroundTopConstraint = self.contentView.constraints.filter{ $0.identifier == "betweenAttributes"}
+        for element in 0..<foregroundTopConstraint.count {
+            if UIScreen.main.bounds.size.height == 812 { // iPhone X
+                foregroundTopConstraint[element].constant = foregroundTopConstraint[element].constant + 8
+            } else if UIScreen.main.bounds.size.height == 736 { // IPhone 8 Plus ; iPhone 7 Plus
+                foregroundTopConstraint[element].constant = foregroundTopConstraint[element].constant + 5
+            } else if UIScreen.main.bounds.size.height == 667 { // IPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
+                foregroundTopConstraint[element].constant = foregroundTopConstraint[element].constant
+            } else if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+                foregroundTopConstraint[element].constant = foregroundTopConstraint[element].constant - 7
+                chooseAlbumArtButtonOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            }
+        }
+//        let albumArtConstraint = self.albumArtImage.constraints.filter{ $0.identifier == "albumArt"}
+//        let noAlbumArtConstraint = self.noPhotoSelectedImage.constraints.filter{ $0.identifier == "albumArt"}
+//        for element in 0..<2 {
+//            if UIScreen.main.bounds.size.height == 812 { // iPhone X
+//                albumArtConstraint[element].constant = 120
+//                noAlbumArtConstraint[element].constant = 120
+//            } else if UIScreen.main.bounds.size.height == 736 { // IPhone 8 Plus ; iPhone 7 Plus
+//                albumArtConstraint[element].constant = 100
+//                noAlbumArtConstraint[element].constant = 100
+//            } else if UIScreen.main.bounds.size.height == 667 { // IPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
+//                albumArtConstraint[element].constant = 100
+//                noAlbumArtConstraint[element].constant = 100
+//            } else if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+//                albumArtConstraint[element].constant = 50
+//                noAlbumArtConstraint[element].constant = 50
+//            }
+//        }
+
+
+//        noPhotoSelectedImage.image = UIImage(named: "defaultnophotoselected")
         
         filenameText.delegate = self
         titleText.delegate = self
@@ -153,19 +187,17 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         if let seg = segueChoice.last {
             
             if seg.identifier == "unwindToSongTVC" {
-                print("stage1.2 ne")
                 self.navigationController?.popViewController(animated: true)
-                print("stage2.2 ne")
                 delegate?.didFinishSongVC(controller: self)
-                print("stage3.2 ne")
             }
             if seg.identifier == "segueToNextSongVC" {
+
                 if ((selectedIndex! + 1) < tableSongs.count) {
-                    
+
                     if let navController = self.navigationController {
                         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                         let nextSongVC : SongViewController = storyboard.instantiateViewController(withIdentifier: "SongViewController") as! SongViewController
-                        
+
                         selectedIndex = selectedIndex! + 1
                         let selectedSong = tableSongs[selectedIndex!]
                         nextSongVC.song = selectedSong
@@ -177,41 +209,21 @@ class SongViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
                             nextSongVC.timesPressedSave = timesPressedSave! + 1
                         }
                         var stack = navController.viewControllers
-                        stack.remove(at: stack.count - 1)       // remove current VC
-                        stack.insert(nextSongVC, at: stack.count) // add the new one
-                        navController.setViewControllers(stack, animated: false) // boom!
+                        stack.remove(at: stack.count - 1)
+                        stack.insert(nextSongVC, at: stack.count)
+                        navController.setViewControllers(stack, animated: false)
                     }
                 } else {
-                    print("stage1.2")
                     self.navigationController?.popViewController(animated: true)
-                    print("stage2.2")
-//                    delegate?.didFinishMultipleSongVC()
-                    print("stage3.2")
                     delegate?.didFinishSongVC(controller: self)
-                    print("stage4.2")
-
                 }
             }
         }
     }
     
     @IBAction func cancelIsTapped(_ sender: UIBarButtonItem) {
-        if timesPressedSave != nil {
-            print("stage1.1")
-            self.navigationController?.popViewController(animated: true)
-            print("stage2.1")
-//            delegate?.didFinishMultipleSongVC()
-            print("stage3.1")
-            delegate?.didFinishSongVC(controller: self)
-            print("stage4.1")
-        }
-        else {
-            print("stage1.1 ne")
-            self.navigationController?.popViewController(animated: true)
-            print("stage2.1 ne")
-            delegate?.didFinishSongVC(controller: self)
-            print("stage3.1 ne")
-        }
+        self.navigationController?.popViewController(animated: true)
+        delegate?.didFinishSongVC(controller: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -253,5 +265,4 @@ func optionalStringToInt(string: String?) -> Int? {
 
 protocol SongVCDelegate {
     func didFinishSongVC(controller: SongViewController)
-//    func didFinishMultipleSongVC()
 }

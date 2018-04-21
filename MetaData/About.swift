@@ -41,8 +41,8 @@ class About: UIViewController, UITextViewDelegate {
         aboutText.isEditable = false
         aboutText.textAlignment = .left
     }
-    
-    override func viewDidLayoutSubviews() {
-        aboutText.setContentOffset(.zero, animated: false)
+
+    override func viewDidAppear(_ animated: Bool) {
+        aboutText.isScrollEnabled = true
     }
 }

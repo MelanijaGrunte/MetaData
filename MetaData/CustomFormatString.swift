@@ -20,7 +20,7 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     @IBOutlet weak var noReplacementSelection: UIButton!
     @IBOutlet weak var customReplacement: UITextField!
     @IBOutlet weak var customLabel: UILabel!
-    
+
     var chosenTags: Array = [String]()
     
     enum CheckBoxes: String {
@@ -72,7 +72,7 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         tagCollectionView.dataSource = self
         
         separation.delegate = self
-        
+
         unknownTagReplacement.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         
         customReplacement.delegate = self
@@ -80,7 +80,22 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
         customReplacement.addTarget(self, action: #selector(CustomFormatString.textFieldDidChange(_:)),
                                     for: UIControlEvents.editingChanged)
     }
-    
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+
+        if let layout = tagCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let itemWidth = tagCollectionView.bounds.width / 3.0
+            var itemHeight = layout.itemSize.height
+            if UIScreen.main.bounds.size.height == 568 {
+                itemHeight = 34
+            }
+            layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+            layout.invalidateLayout()
+        }
+    }
+
     @IBAction func unknownTagReplacement(_ sender: UIButton) {
         unknownTagReplacement.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
         nothingReplacement.titleLabel?.font = UIFont.systemFont(ofSize: 15)
@@ -136,13 +151,32 @@ class CustomFormatString: UIViewController, UITextFieldDelegate, UINavigationCon
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tags.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomFormatStringTagCell
         cell.tagLabel.text = tags[indexPath.row].rawValue
         let type = tags[indexPath.row]
         cell.cellValue = tagChoice(for: type)
-        
+
+        if UIScreen.main.bounds.size.width == 375 { // iPhone X ; iPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
+            if UIScreen.main.bounds.size.height == 812 {
+                cell.tagLabel.font = UIFont.systemFont(ofSize: 15.0)
+            } else {
+                cell.tagLabel.font = UIFont.systemFont(ofSize: 14.0) }
+        } else if UIScreen.main.bounds.size.width == 414 { // IPhone 8 Plus ; iPhone 7 Plus
+            cell.tagLabel.font = UIFont.systemFont(ofSize: 15.0)
+//            cell.checkbox.frame.size.height = 13
+//            cell.checkbox.frame.size.width = 13
+//            cell.checkbox.frame = CGRect(x: 0, y: 0, width: 13, height: 13)
+        } else if UIScreen.main.bounds.size.width == 320 { // iPhone SE
+            cell.tagLabel.font = UIFont.systemFont(ofSize: 13.0)
+//            cell.frame.width. = 60
+//                        cell.checkbox.frame.size.height = 10
+//                        cell.checkbox.frame.size.width = 10
+//
+//            cell.checkbox.frame = CGRect(x: 0, y: 0, width: 10, height: 10)
+        }
+
         return cell
     }
     

@@ -95,6 +95,17 @@ class ReplaceStrings: UIViewController, UITextFieldDelegate, UINavigationControl
         caseSensitive.addTarget(self, action: #selector(ReplaceStrings.caseSensitive(_:)), for: .touchUpInside)
         caseInstensitive.addTarget(self, action: #selector(ReplaceStrings.caseInsensitive(_:)), for: .touchUpInside)
     }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if let layout = tagCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            let itemWidth = tagCollectionView.bounds.width / 3.0
+            let itemHeight = layout.itemSize.height
+            layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+            layout.invalidateLayout()
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return tags.count
@@ -104,7 +115,18 @@ class ReplaceStrings: UIViewController, UITextFieldDelegate, UINavigationControl
         
         let cell = tagCollectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! ReplaceStringsTagCell
         cell.tagLabel.text = tags[indexPath.row].rawValue
-        
+
+        if UIScreen.main.bounds.size.width == 375 { // iPhone X ; iPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
+            if UIScreen.main.bounds.size.height == 812 {
+                cell.tagLabel.font = UIFont.systemFont(ofSize: 15.0)
+            } else {
+                cell.tagLabel.font = UIFont.systemFont(ofSize: 14.0) }
+        } else if UIScreen.main.bounds.size.width == 414 { // IPhone 8 Plus ; iPhone 7 Plus
+            cell.tagLabel.font = UIFont.systemFont(ofSize: 15.0)
+
+        } else if UIScreen.main.bounds.size.width == 320 { // iPhone SE
+            cell.tagLabel.font = UIFont.systemFont(ofSize: 13.0) }
+
         return cell
     }
     

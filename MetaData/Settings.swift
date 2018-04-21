@@ -10,8 +10,21 @@ import UIKit
 import RealmSwift
 
 class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
-    
-    
+
+
+    @IBOutlet weak var loadSongsFromDirectoryOutlet: UIButton!
+    @IBOutlet weak var goToNextSongWhenFinishedEditingLabelOutlet: UILabel!
+    @IBOutlet weak var sortFilesByOutlet: UIButton!
+    @IBOutlet weak var chooseColumnAttributeOutlet: UIButton!
+    @IBOutlet weak var replaceStringsInTagsAndFilenamesOutlet: UIButton!
+    @IBOutlet weak var renameFilesAutomaticallyLabelOutlet: UILabel!
+    @IBOutlet weak var selectFormatStringOutlet: UIButton!
+    @IBOutlet weak var configureDefaultFormatStyleOutlet: UIButton!
+    @IBOutlet weak var applyTheSelectedFormatStringToAllSongsOutlet: UIButton!
+    @IBOutlet weak var restoreDefaultSettingsOutlet: UIButton!
+    @IBOutlet weak var deleteAllSongsOutlet: UIButton!
+
+
     @IBOutlet weak var selectFormatStringCell: UITableViewCell!
     @IBOutlet weak var selectFormatStringButton: UIButton!
     @IBOutlet weak var configureFormatStyleCell: UITableViewCell!
@@ -29,7 +42,48 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        if UIScreen.main.bounds.size.width == 375 { // iPhone X ; iPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
+//            loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 17.0)
+//            sortFilesByOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            chooseColumnAttributeOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            replaceStringsInTagsAndFilenamesOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            renameFilesAutomaticallyLabelOutlet.font = UIFont.systemFont(ofSize: 17.0)
+//            selectFormatStringOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            configureDefaultFormatStyleOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            applyTheSelectedFormatStringToAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            restoreDefaultSettingsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+//            deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
+        } else if UIScreen.main.bounds.size.width == 414 { // IPhone 8 Plus ; iPhone 7 Plus
+//            loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 18.0)
+//            sortFilesByOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            chooseColumnAttributeOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            replaceStringsInTagsAndFilenamesOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            renameFilesAutomaticallyLabelOutlet.font = UIFont.systemFont(ofSize: 18.0)
+//            selectFormatStringOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            configureDefaultFormatStyleOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            applyTheSelectedFormatStringToAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            restoreDefaultSettingsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+//            deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
+        } else if UIScreen.main.bounds.size.width == 320 { // iPhone SE
+            loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 15.0)
+            goToNextSongWhenFinishedEditingLabelOutlet.text = "Edit next song when pressed save"
+            formatStringRenamingSwitchOutlet.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+            goToNextSongWhenEditingSwitchOutlet.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+            sortFilesByOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            chooseColumnAttributeOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            replaceStringsInTagsAndFilenamesOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            renameFilesAutomaticallyLabelOutlet.font = UIFont.systemFont(ofSize: 15.0)
+            selectFormatStringOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            configureDefaultFormatStyleOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            applyTheSelectedFormatStringToAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            restoreDefaultSettingsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+        }
+
         self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
         
         goToNextSongWhenEditingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForGoingToTheNextSong)
@@ -90,6 +144,15 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         }
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)
     }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+        if UIScreen.main.bounds.size.width == 320 { // iPhone SE
+            return 40 }
+        else {
+            return 55 }
+            //Choose your custom row height
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
@@ -123,8 +186,8 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     }
     
     @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? ReplaceStrings {
-        }
+//        if let sourceViewController = sender.source as? ReplaceStrings {
+//        }
     }
     
     
@@ -139,14 +202,14 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         let albumArt8 = NSData(data: UIImagePNGRepresentation(UIImage(named: "sentimental goblin")!)!) as Data
         let albumArt9 = NSData(data: UIImagePNGRepresentation(UIImage(named: "howling songs")!)!) as Data
         let albumArt10 = NSData(data: UIImagePNGRepresentation(UIImage(named: "armchair boogie")!)!) as Data
-        // let albumArt11 = NSData(data: UIImagePNGRepresentation(UIImage(named: "drifters / love is the devil")!)!) as Data
+        let albumArt11 = NSData(data: UIImagePNGRepresentation(UIImage(named: "drifters : love is the devil")!)!) as Data
         let albumArt12 = NSData(data: UIImagePNGRepresentation(UIImage(named: "a stairway to the stars")!)!) as Data
         let albumArt13 = NSData(data: UIImagePNGRepresentation(UIImage(named: "rocket")!)!) as Data
         let albumArt14and15 = NSData(data: UIImagePNGRepresentation(UIImage(named: "musick to play in the dark, volume 2")!)!) as Data
         let albumArt16 = NSData(data: UIImagePNGRepresentation(UIImage(named: "東方不敗")!)!) as Data
         let albumArt17 = NSData(data: UIImagePNGRepresentation(UIImage(named: "i've always been good at true love")!)!) as Data
         let albumArt18 = NSData(data: UIImagePNGRepresentation(UIImage(named: "putni ir lohi")!)!) as Data
-        // let albumArt19 = NSData(data: UIImagePNGRepresentation(UIImage(named: "the visitors")!)!) as Data
+        let albumArt19 = NSData(data: UIImagePNGRepresentation(UIImage(named: "the visitors")!)!) as Data
         let albumArt20 = NSData(data: UIImagePNGRepresentation(UIImage(named: "corpus I")!)!) as Data
         let albumArt21 = NSData(data: UIImagePNGRepresentation(UIImage(named: "historyjka")!)!) as Data
         let albumArt22 = NSData(data: UIImagePNGRepresentation(UIImage(named: "confusion is sex")!)!) as Data
@@ -156,13 +219,13 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         let albumArt26 = NSData(data: UIImagePNGRepresentation(UIImage(named: "g h o s t")!)!) as Data
         // let albumArt27 = NSData(data: UIImagePNGRepresentation(UIImage(named: "")!)!) as Data
         let albumArt28 = NSData(data: UIImagePNGRepresentation(UIImage(named: "behind every great man")!)!) as Data
-        // let albumArt29 = NSData(data: UIImagePNGRepresentation(UIImage(named: "pēdējā derība")!)!) as Data
+        let albumArt29 = NSData(data: UIImagePNGRepresentation(UIImage(named: "pedeja deriba")!)!) as Data
         let albumArt30 = NSData(data: UIImagePNGRepresentation(UIImage(named: "demiurge")!)!) as Data
         let albumArt31 = NSData(data: UIImagePNGRepresentation(UIImage(named: "hideous")!)!) as Data
         let albumArt32 = NSData(data: UIImagePNGRepresentation(UIImage(named: "lights on water")!)!) as Data
         let albumArt33 = NSData(data: UIImagePNGRepresentation(UIImage(named: "animals")!)!) as Data
         let albumArt34 = NSData(data: UIImagePNGRepresentation(UIImage(named: "who killed john todd?")!)!) as Data
-        // let albumArt35 = NSData(data: UIImagePNGRepresentation(UIImage(named: "nekavējies, šīs ir spēles ar tevi")!)!) as Data
+        let albumArt35 = NSData(data: UIImagePNGRepresentation(UIImage(named: "nekavejies, sis ir speles ar tevi")!)!) as Data
         let albumArt36 = NSData(data: UIImagePNGRepresentation(UIImage(named: "exmilitary")!)!) as Data
         let albumArt37 = NSData(data: UIImagePNGRepresentation(UIImage(named: "1990")!)!) as Data
         let albumArt38 = NSData(data: UIImagePNGRepresentation(UIImage(named: "the glow pt. 2")!)!) as Data
@@ -177,8 +240,16 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         let albumArt47 = NSData(data: UIImagePNGRepresentation(UIImage(named: "figure 8")!)!) as Data
         let albumArt48 = NSData(data: UIImagePNGRepresentation(UIImage(named: "you take nothing")!)!) as Data
         let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "birdy nam nam live")!)!) as Data
-        // let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "gloomy sunday")!)!) as Data
-        
+        // let albumArt50 = NSData(data: UIImagePNGRepresentation(UIImage(named: "gloomy sunday")!)!) as Data
+        // let albumArt51 = NSData(data: UIImagePNGRepresentation(UIImage(named: "sad dwight")!)!) as Data
+        let albumArt52 = NSData(data: UIImagePNGRepresentation(UIImage(named: "velly joonas")!)!) as Data
+        let albumArt53 = NSData(data: UIImagePNGRepresentation(UIImage(named: "select")!)!) as Data
+        let albumArt54 = NSData(data: UIImagePNGRepresentation(UIImage(named: "solo")!)!) as Data
+        let albumArt55 = NSData(data: UIImagePNGRepresentation(UIImage(named: "the spiral")!)!) as Data
+
+
+
+
         let realm = try! Realm()
         try! realm.write() {
             let song1 = realm.create(Song.self, value: ["jandek down in a mirror", "Down in a mirror", "Jandek", "Chair Beside a Window", 01, nil,  1982, "blues; lo-fi; folk; experimental", "Jandek", nil, albumArt1, nil])
@@ -337,7 +408,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song11.genre = nil
         song11.composer = nil
         song11.comment = nil
-        song11.albumArtImage = nil
+        song11.albumArtImage = albumArt11
         song11.albumArtist = nil
         
         let song12 = Song()
@@ -449,7 +520,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song19.genre = nil
         song19.composer = nil
         song19.comment = nil
-        song19.albumArtImage = nil
+        song19.albumArtImage = albumArt19
         song19.albumArtist = nil
         
         let song20 = Song()
@@ -589,7 +660,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song29.genre = nil
         song29.composer = nil
         song29.comment = nil
-        song29.albumArtImage = nil //albumArt29
+        song29.albumArtImage = albumArt29
         song29.albumArtist = nil
         
         let song30 = Song()
@@ -673,7 +744,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song35.genre = "drone; psychedelic; latvian; experimental; slowcore"
         song35.composer = nil
         song35.comment = nil
-        song35.albumArtImage = nil // albumArt35
+        song35.albumArtImage = albumArt35
         song35.albumArtist = nil
         
         let song36 = Song()
@@ -885,9 +956,79 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song50.comment = "poem by László Jávor"
         song50.albumArtImage = nil
         song50.albumArtist = nil
+
+        let song51 = Song()
+        song51.filename = "Sad Dwight Plays Recorder (The Office)"
+        song51.title = nil
+        song51.artist = nil
+        song51.album = nil
+        song51.track.value = nil
+        song51.discnumber.value = nil
+        song51.year.value = nil
+        song51.genre = nil
+        song51.composer = nil
+        song51.comment = "\"Bon Jovi - You Give Love A Bad Name\" cover"
+        song51.albumArtImage = nil
+        song51.albumArtist = nil
+
+        let song52 = Song()
+        song52.filename = "Velly Joonas ‎- Stopp, Seisku Aeg! (FULL 7\", soul, Estonia, USSR, 1980-1983)"
+        song52.title = "Stopp, Seisku Aeg!"
+        song52.artist = "Velly Joonas"
+        song52.album = nil
+        song52.track.value = nil
+        song52.discnumber.value = nil
+        song52.year.value = nil
+        song52.genre = "soul"
+        song52.composer = nil
+        song52.comment = nil
+        song52.albumArtImage = albumArt52
+        song52.albumArtist = nil
+
+        let song53 = Song()
+        song53.filename = "Kim Wilde - Cambodia (1981) HD 0815007"
+        song53.title = "Cambodia"
+        song53.artist = "Kim Wilde"
+        song53.album = "Select"
+        song53.track.value = 10
+        song53.discnumber.value = nil
+        song53.year.value = nil
+        song53.genre = nil
+        song53.composer = nil
+        song53.comment = nil
+        song53.albumArtImage = albumArt53
+        song53.albumArtist = nil
+
+        let song54 = Song()
+        song54.filename = "Tujiko Noriko - Solo - Magic"
+        song54.title = "Magic"
+        song54.artist = "Tujiko Noriko"
+        song54.album = "Solo"
+        song54.track.value = nil
+        song54.discnumber.value = nil
+        song54.year.value = nil
+        song54.genre = "pop"
+        song54.composer = nil
+        song54.comment = nil
+        song54.albumArtImage = albumArt54
+        song54.albumArtist = nil
+
+        let song55 = Song()
+        song55.filename = "Puce Mary | Enter into Them"
+        song55.title = "Enter into Them"
+        song55.artist = "Puce Mary"
+        song55.album = "The Spiral"
+        song55.track.value = 4
+        song55.discnumber.value = nil
+        song55.year.value = 2016
+        song55.genre = "death industrial; noise; power electronics"
+        song55.composer = nil
+        song55.comment = nil
+        song55.albumArtImage = albumArt55
+        song55.albumArtist = nil
         
         try! realm.write{
-            realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50])
+            realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50, song51, song52, song53, song54, song55])
         }
         print("song loading complete")
     }

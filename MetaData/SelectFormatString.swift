@@ -14,6 +14,10 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
     
     @IBOutlet var selectFormatStringView: UIView!
     @IBOutlet weak var selectFormatStringTableView: UITableView!
+
+    @IBOutlet weak var tableViewWidth: NSLayoutConstraint!
+    @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
+    
     
     enum filenameType: String {
         case artistAlbumTrackTitle = "artist - album - track - title"
@@ -75,6 +79,14 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
         selectFormatStringTableView.layer.cornerRadius = 10
         selectFormatStringTableView.layer.masksToBounds = true
     }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+            return 35
+        } else { // IPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6 ; IPhone 8 Plus ; iPhone 7 Plus ; iPhone X
+            return 40
+        }
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return types.count;
@@ -82,7 +94,17 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+            tableViewHeight.constant = 315
+            tableViewWidth.constant = 250
+        } else { // IPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6 ; IPhone 8 Plus ; iPhone 7 Plus ; iPhone X
+            tableViewHeight.constant = 360
+            tableViewWidth.constant = 300
+        }
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
+        cell.textLabel?.textAlignment = .center
+
         cell.textLabel?.text = types[indexPath.row].rawValue
         cell.textLabel?.font = cell.textLabel?.font.withSize(20)
 
@@ -96,6 +118,12 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
             cell.accessoryType = UITableViewCellAccessoryType.checkmark
         }
 
+        if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+            cell.textLabel?.font = cell.textLabel?.font.withSize(15)
+        } else {
+            cell.textLabel?.font = cell.textLabel?.font.withSize(18)
+        }
+
         var customFormatString: Results<CustomFormatStringStyle>?
         customFormatString = realm.objects(CustomFormatStringStyle.self)
         let style = customFormatString?.last
@@ -103,7 +131,11 @@ class SelectFormatString: UIViewController, UITableViewDelegate, UITableViewData
             let customStringStyleCell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "cellWithACustomStyle")
             customStringStyleCell.textLabel?.textColor = UIColor(white: 0.75, alpha:1)
             customStringStyleCell.textLabel?.text = types[indexPath.row].rawValue
-            customStringStyleCell.textLabel?.font = cell.textLabel?.font.withSize(20)
+//            if UIScreen.main.bounds.size.height == 568 { // iPhone SE
+//                customStringStyleCell.textLabel?.font = cell.textLabel?.font.withSize(15)
+//            } else {
+//                customStringStyleCell.textLabel?.font = cell.textLabel?.font.withSize(20)
+//            } // man nepatīk, neiedarbojas, !!!
             customStringStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
             customStringStyleCell.isUserInteractionEnabled = false
             return customStringStyleCell

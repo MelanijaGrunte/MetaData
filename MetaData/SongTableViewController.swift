@@ -25,10 +25,9 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         
         loadSampleSongs()
 
-        //searchBar.delegate = self
-        // searchBar.returnKeyType = UIReturnKeyType.done
-        //navigationItem.hidesSearchBarWhenScrolling = false // nestrādā, bet īstenībā good point. varbūt kko tādu vajadzētu
-        
+        searchBar.delegate = self
+        searchBar.returnKeyType = UIReturnKeyType.done
+
         self.tableView.reloadData()
     }
     
@@ -47,6 +46,9 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? SongTableViewCell else {
             fatalError("The dequeued cell is not an instance of SongTableViewCell.")
         }
+        cell.preservesSuperviewLayoutMargins = false
+        cell.separatorInset = UIEdgeInsets.zero
+        cell.layoutMargins = UIEdgeInsets.zero
         let song = displayedSongs[indexPath.row]
         let realm = try! Realm()
         let columnAttribute = realm.objects(Column.self)
@@ -72,10 +74,18 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
         }
         return cell
     }
-    
-    // MARK: Sorting
-    
-    // searchbar
+
+    override func viewWillAppear(_ animated: Bool) {
+        let segueChoice = realm.objects(SegueIdentifier.self)
+        let seg = segueChoice.last
+        if seg?.identifier == "segueToNextSongVC" {
+            super.viewWillAppear(animated)
+            self.tableView.reloadData()
+        }
+    }
+
+    // MARK: Searchbar
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if let searchQuery = searchBar.text, !searchQuery.isEmpty {
             let realm = try! Realm()
@@ -104,16 +114,6 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-        print("Stage in the middle")
-        
-        let destination = segue.destination as! SongViewController
-        destination.segueFromController = "SongTableViewController"
-
-        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let nextSongVC : SongViewController = storyboard.instantiateViewController(withIdentifier: "SongViewController") as! SongViewController
-
-//        let destinationTWO = segue.destination as nextSongVC
-        nextSongVC.delegate = self
 
         super.prepare(for: segue, sender: sender)
         switch(segue.identifier ?? "") {
@@ -136,34 +136,17 @@ class SongTableViewController: UITableViewController, UISearchBarDelegate, SongV
             songDetailViewController.delegate = self
         default: ()
         }
-
     }
     
     //MARK: Actions
     
-    // rediģētās dziesmas aizstāšana ar veco versiju
     func didFinishSongVC(controller: SongViewController) {
-        print("stage4")
         if let sourceViewController = controller as? SongViewController, let song = sourceViewController.song {
-            print("stage5")
             if let selectedIndexPath = tableView.indexPathForSelectedRow {
-                print("stage6")
                 var array = Array(displayedSongs)
                 array[selectedIndexPath.row] = song
                 loadSampleSongs()
                 tableView.reloadRows(at: [selectedIndexPath], with: .none)
-            } else {
-                print("stage6-but-not")
-                var array = Array(displayedSongs)
-                for element in 0...49 {
-                    array[element] = song
-                    let row = IndexPath(row: element, section: 0)
-                    tableView.reloadRows(at: [row], with: .none)
-                }
-                loadSampleSongs()
-                tableView.reloadData()
-                print("stage7-but-not")
-
             }
         }
     }
