@@ -14,12 +14,9 @@ class SongTableViewCell: UITableViewCell {
     
     @IBOutlet weak var albumArtImage: UIImageView!
     @IBOutlet weak var columnAttribute: UILabel!
-    
+
+    // sagatavo šūnas outletus
     override func awakeFromNib() {
         super.awakeFromNib()
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
     }
 }

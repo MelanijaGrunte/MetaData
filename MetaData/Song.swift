@@ -10,20 +10,26 @@ import UIKit
 import RealmSwift
 
 class Song: Object {
+    // piešķir faila objektam metadatus
     @objc dynamic var filename: String = ""
     @objc dynamic var title: String?
     @objc dynamic var artist: String?
     @objc dynamic var album: String?
+    // Realmā Int? nevar būt jo swiftā Int nevar tikt deklarēts kā @objc
     var track = RealmOptional<Int>()
     var discnumber = RealmOptional<Int>()
     var year = RealmOptional<Int>()
     @objc dynamic var genre: String?
     @objc dynamic var composer: String?
     @objc dynamic var comment: String?
+    // albuma vāciņa attēla mainīgais ir Data tipa mainīgais, jo Realm neatbalsta UIImage tipu
     @objc dynamic var albumArtImage: Data?
     @objc dynamic var albumArtist: String?
+
+    // izveido sarakstu no Song objektiem
     let songs = List<Song>()
-    
+
+    // piešķir metadatu aprakstiem to vērtības, ja tādas eksistē, ja neeksistē, piešķir tekstu par to neesamību, ko var pielietot formatējot failu nosaukumus
     var titleDescription: String {
         if title == "" {
             return "unknown title" }
@@ -42,6 +48,7 @@ class Song: Object {
         else {
             return album ?? "unknown album" }
     }
+    // pārveido skaitliskos mainīgos String tipa mainīgajos
     var trackDescription: String {
         if let track = track.value {
             return String(describing: track)

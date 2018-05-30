@@ -35,11 +35,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Tell Realm to use this new configuration object for the default Realm
         Realm.Configuration.defaultConfiguration = config
 
+        // piešķir Realm datubāzes objekties vērtības, ja tādas vēl nav uzstādītas
         RealmHelper.configureDefaultValues()
         
         // Now that we've told Realm how to handle the schema change, opening the file
         // will automatically perform the migration
-        
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
+
         return true
     }
     

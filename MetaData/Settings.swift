@@ -23,8 +23,6 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     @IBOutlet weak var applyTheSelectedFormatStringToAllSongsOutlet: UIButton!
     @IBOutlet weak var restoreDefaultSettingsOutlet: UIButton!
     @IBOutlet weak var deleteAllSongsOutlet: UIButton!
-
-
     @IBOutlet weak var selectFormatStringCell: UITableViewCell!
     @IBOutlet weak var selectFormatStringButton: UIButton!
     @IBOutlet weak var configureFormatStyleCell: UITableViewCell!
@@ -33,9 +31,6 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     @IBOutlet weak var goToNextSongWhenEditingSwitchOutlet: UISwitch!
     @IBOutlet weak var deleteAllSongsButton: UIButton!
     
-    //    var switchStateForGoingToTheNextSong = false
-    //    var switchStateForRenamingFilesAutomatically = false
-    
     let switchKeyForGoingToTheNextSong = "goToNextSongSwitchState"
     let switchKeyForRenamingFilesAutomatically = "renameFilesAutomaticallySwitchState"
     
@@ -43,31 +38,8 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if UIScreen.main.bounds.size.width == 375 { // iPhone X ; iPhone 8 ; iPhone 6s Plus ; iPhone 6 Plus ; iPhone 7 ; iPhone 6s ; iPhone 6
-//            loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 17.0)
-//            sortFilesByOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            chooseColumnAttributeOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            replaceStringsInTagsAndFilenamesOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            renameFilesAutomaticallyLabelOutlet.font = UIFont.systemFont(ofSize: 17.0)
-//            selectFormatStringOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            configureDefaultFormatStyleOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            applyTheSelectedFormatStringToAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            restoreDefaultSettingsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-//            deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 17.0)
-        } else if UIScreen.main.bounds.size.width == 414 { // IPhone 8 Plus ; iPhone 7 Plus
-//            loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 18.0)
-//            sortFilesByOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            chooseColumnAttributeOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            replaceStringsInTagsAndFilenamesOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            renameFilesAutomaticallyLabelOutlet.font = UIFont.systemFont(ofSize: 18.0)
-//            selectFormatStringOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            configureDefaultFormatStyleOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            applyTheSelectedFormatStringToAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            restoreDefaultSettingsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-//            deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 18.0)
-        } else if UIScreen.main.bounds.size.width == 320 { // iPhone SE
+        // pielāgo šūnu teksta izmēru pogās un uzrakstos, slēdža izmēru kā arī pašu tekstu mazāka izmēra ekrānam (iPhone SE)
+        if UIScreen.main.bounds.size.width == 320 { // iPhone SE
             loadSongsFromDirectoryOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
             goToNextSongWhenFinishedEditingLabelOutlet.font = UIFont.systemFont(ofSize: 15.0)
             goToNextSongWhenFinishedEditingLabelOutlet.text = "Edit next song when pressed save"
@@ -84,11 +56,9 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
             deleteAllSongsOutlet.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
         }
 
-        self.edgesForExtendedLayout = UIRectEdge.init(rawValue: 0)
-        
+        // uzstāda lietotāja izvēlētos slēdža stāvokļus, iestata funkciju izsaucošos slēdžus
         goToNextSongWhenEditingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForGoingToTheNextSong)
         goToNextSongWhenEditingSwitch(goToNextSongWhenEditingSwitchOutlet)
-        
         formatStringRenamingSwitchOutlet.isOn = UserDefaults.standard.bool(forKey: switchKeyForRenamingFilesAutomatically)
         formatStringRenamingSwitch(formatStringRenamingSwitchOutlet)
     }
@@ -96,74 +66,62 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     @IBAction func formatStringRenamingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
         let automaticFileRenaming = realm.objects(AutomaticFileRenaming.self)
-
+        // ja slēdzis ir ieslēgts, AutomaticFileRenaming klases automatically mainīgajam tiek piešķirta loģiskā vērtība true, kas tiks pārbaudīta saglabājot failu rediģēšanas skatā
         if (sender.isOn == true) {
             try! realm.write {
                 automaticFileRenaming.setValue(true, forKeyPath: "automatically")
             }
-//            selectFormatStringCell.backgroundColor = UIColor.white
-//            selectFormatStringButton.setTitleColor(.black, for: .normal)
-//            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.none
-//            selectFormatStringCell.isUserInteractionEnabled = true
-//
-//            configureFormatStyleCell.backgroundColor = UIColor.white
-//            configureFormatStyleButton.setTitleColor(.black, for: .normal)
-//            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.none
-//            configureFormatStyleCell.isUserInteractionEnabled = true
         }
+        // ja slēdzis ir ieslēgts, AutomaticFileRenaming klases automatically mainīgajam tiek piešķirta loģiskā vērtība false
         if (sender.isOn == false) {
             try! realm.write {
                 automaticFileRenaming.setValue(false, forKeyPath: "automatically")
             }
-//            selectFormatStringCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
-//            selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-//            selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
-//            selectFormatStringCell.isUserInteractionEnabled = false
-//
-//            configureFormatStyleCell.backgroundColor = UIColor(red: 0.97, green: 0.97, blue: 0.99, alpha: 1)
-//            configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-//            configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
-//            configureFormatStyleCell.isUserInteractionEnabled = false
         }
+        // slēdža stāvoklis tiek saglabāts
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForRenamingFilesAutomatically)
     }
     
     @IBAction func goToNextSongWhenEditingSwitch(_ sender: UISwitch) {
         let realm = try! Realm()
         let segueIdentifier = realm.objects(SegueIdentifier.self)
-
+        // ja slēdzis ir ieslēgts, SegueIdentifier klases identifier mainīgajam tiek piešķirta vērtība, kas apzīmē rediģēšanas skata virzienu uz nākamo rediģēšanas skatu
         if (sender.isOn == true) {
             try! realm.write {
                 segueIdentifier.setValue("segueToNextSongVC", forKeyPath: "identifier")
             }
         }
+        // ja slēdzis ir izslēgts, SegueIdentifier klases identifier mainīgajam tiek piešķirta vērtība, kas apzīmē rediģēšanas skata virzienu uz audio failu tabulas skatu
         if (sender.isOn == false) {
             try! realm.write {
                 segueIdentifier.setValue("unwindToSongTVC", forKeyPath: "identifier")
             }
         }
+        // slēdža stāvoklis tiek saglabāts
         UserDefaults.standard.set(sender.isOn, forKey: switchKeyForGoingToTheNextSong)
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
+    //  pielāgo šūnu augstumu dažāda augstuma ekrāniem
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if UIScreen.main.bounds.size.width == 320 { // iPhone SE
             return 40 }
         else {
             return 55 }
-            //Choose your custom row height
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // ja tiek izvēlēta pirmā šūna, kas ir paredzēta failu ielādēšanai
         if indexPath.row == 0 {
             let realm = try! Realm()
             let songs = realm.objects(Song.self)
             try! realm.write {
+                // tad datubāzei pievieno failus
                 realm.add(songs)
             }
         }
     }
-    
+
+    // piefiksē veiktās izmaiņas RestoreDefaultSettings
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let nextVC = segue.destination as? RestoreDefaultSettings {
             nextVC.delegate = self
@@ -171,28 +129,23 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
             dismiss(animated: true, completion: {})
         }
     }
-    
+
+    // funkcija, kas izpildās, kad lietotājs izvēlējās atiestatīt noklusējamos iestatījumus
     func didRestoreSettings(){
+        // uzliek abiem iestatījuma slēdžiem izslēgto statusu
         formatStringRenamingSwitchOutlet.setOn(false, animated: true)
         goToNextSongWhenEditingSwitchOutlet.setOn(false, animated: true)
+        // saglabā abiem slēdžiem statusu
         UserDefaults.standard.set(goToNextSongWhenEditingSwitchOutlet.isOn, forKey: "goToNextSongSwitchState")
         UserDefaults.standard.set(formatStringRenamingSwitchOutlet.isOn, forKey: "renameFilesAutomaticallySwitchState")
-//        selectFormatStringButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-//        selectFormatStringCell.selectionStyle = UITableViewCellSelectionStyle.gray
-//        selectFormatStringCell.isUserInteractionEnabled = false
-//        configureFormatStyleButton.setTitleColor(UIColor(white: 0.75, alpha:1), for: .normal)
-//        configureFormatStyleCell.selectionStyle = UITableViewCellSelectionStyle.gray
-//        configureFormatStyleCell.isUserInteractionEnabled = false
     }
-    
+
+    // atgriež atpakaļ uz iestatījumu skatu, kad ir ticis atvērts CustomFormatString vai ReplaceString skats
     @IBAction func unwindToSettings(sender: UIStoryboardSegue) {
-//        if let sourceViewController = sender.source as? ReplaceStrings {
-//        }
     }
-    
-    
+
     @IBAction func loadSongs(_ sender: UIButton) {
-        
+        // izveido Data tipa mainīgos no assets.xcassets png formāta attēliem, lai to vērtību varētu saglabāt Realm datubāzē
         let albumArt1 = NSData(data: UIImagePNGRepresentation(UIImage(named: "chair beside a window")!)!) as Data
         let albumArt2 = NSData(data: UIImagePNGRepresentation(UIImage(named: "china")!)!) as Data
         let albumArt3 = NSData(data: UIImagePNGRepresentation(UIImage(named: "this old dog")!)!) as Data
@@ -217,7 +170,6 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         let albumArt24 = NSData(data: UIImagePNGRepresentation(UIImage(named: "bedwetter")!)!) as Data
         let albumArt25 = NSData(data: UIImagePNGRepresentation(UIImage(named: "fetish bones")!)!) as Data
         let albumArt26 = NSData(data: UIImagePNGRepresentation(UIImage(named: "g h o s t")!)!) as Data
-        // let albumArt27 = NSData(data: UIImagePNGRepresentation(UIImage(named: "")!)!) as Data
         let albumArt28 = NSData(data: UIImagePNGRepresentation(UIImage(named: "behind every great man")!)!) as Data
         let albumArt29 = NSData(data: UIImagePNGRepresentation(UIImage(named: "pedeja deriba")!)!) as Data
         let albumArt30 = NSData(data: UIImagePNGRepresentation(UIImage(named: "demiurge")!)!) as Data
@@ -240,36 +192,20 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         let albumArt47 = NSData(data: UIImagePNGRepresentation(UIImage(named: "figure 8")!)!) as Data
         let albumArt48 = NSData(data: UIImagePNGRepresentation(UIImage(named: "you take nothing")!)!) as Data
         let albumArt49 = NSData(data: UIImagePNGRepresentation(UIImage(named: "birdy nam nam live")!)!) as Data
-        // let albumArt50 = NSData(data: UIImagePNGRepresentation(UIImage(named: "gloomy sunday")!)!) as Data
-        // let albumArt51 = NSData(data: UIImagePNGRepresentation(UIImage(named: "sad dwight")!)!) as Data
         let albumArt52 = NSData(data: UIImagePNGRepresentation(UIImage(named: "velly joonas")!)!) as Data
         let albumArt53 = NSData(data: UIImagePNGRepresentation(UIImage(named: "select")!)!) as Data
         let albumArt54 = NSData(data: UIImagePNGRepresentation(UIImage(named: "solo")!)!) as Data
         let albumArt55 = NSData(data: UIImagePNGRepresentation(UIImage(named: "the spiral")!)!) as Data
 
-
-
-
+        // izveido faila objektu ar metadatiem un pievieno to Realm datubāzei
         let realm = try! Realm()
         try! realm.write() {
             let song1 = realm.create(Song.self, value: ["jandek down in a mirror", "Down in a mirror", "Jandek", "Chair Beside a Window", 01, nil,  1982, "blues; lo-fi; folk; experimental", "Jandek", nil, albumArt1, nil])
             song1.track.value = 01
             song1.year.value = 1982
         }
-        
-        //        let song1 = Song()
-        //        song1.filename = "jandek down in a mirror"
-        //        song1.title = "Down in a mirror"
-        //        song1.artist = "Jandek"
-        //        song1.album = "Chair Beside a Window"
-        //        song1.track.value = 01
-        //        song1.year.value = 1982
-        //        song1.genre = "blues; lo-fi; folk; experimental"
-        //        song1.composer = "Jandek"
-        //        song1.comment = nil
-        //        song1.albumArtImage = albumArt1
-        //        song1.albumArtist = nil
-        
+
+        // izveido faila objektus un pievieno tiem metadatus
         let song2 = Song()
         song2.filename = "CHOMSKY CHESS CLUB - TOURING"
         song2.title = "TOURING"
@@ -734,7 +670,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song34.albumArtist = nil
         
         let song35 = Song()
-        song35.filename = "mona de bo - priekšpēdējais"
+        song35.filename = "mona de bo - priekspedejais"
         song35.title = "priekšpēdējais"
         song35.artist = "mona de bo"
         song35.album = "Nekavējies, šīs ir spēles ar tevi"
@@ -744,7 +680,7 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song35.genre = "drone; psychedelic; latvian; experimental; slowcore"
         song35.composer = nil
         song35.comment = nil
-        song35.albumArtImage = albumArt35
+        song35.albumArtImage = nil
         song35.albumArtist = nil
         
         let song36 = Song()
@@ -1026,7 +962,8 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
         song55.comment = nil
         song55.albumArtImage = albumArt55
         song55.albumArtist = nil
-        
+
+        // pievieno izveidotos objektus Realm datubāzei
         try! realm.write{
             realm.add([song2, song3, song4, song5, song6, song7, song8, song9, song10, song11, song12, song13, song14, song15, song16, song17, song18, song19, song20, song21, song22, song23, song24, song25, song26, song27, song28, song29, song30, song31, song32, song33, song34, song35, song36, song37, song38, song39, song40, song41, song42, song43, song44, song45, song46, song47, song48, song49, song50, song51, song52, song53, song54, song55])
         }
@@ -1034,11 +971,11 @@ class Settings: UITableViewController, RestoreDefaultSettingsDelegate {
     }
     
     @IBAction func deleteAllSongs(_ sender: UIButton) {
-
+        // ja tiek veikts pieskāriens dzēšanas pogai
         let realm = try! Realm()
         let songs = realm.objects(Song.self)
-
         try! realm.write {
+            // tad no datubāzes tiek izdzēsti faili
             realm.delete(songs)
         }
         print("song deleting complete")

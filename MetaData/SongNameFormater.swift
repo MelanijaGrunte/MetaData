@@ -15,11 +15,12 @@ class SongNameFormatter {
         let realm = try! Realm()
 
         let fileRenamingChoice = realm.objects(FileRenamingChoice.self)
-        var chosenFormatStyle = fileRenamingChoice.last
+        let chosenFormatStyle = fileRenamingChoice.last
 
         let style = realm.objects(CustomFormatStringStyle.self)
         let chosenStyle = style.last
 
+        // formāta stila elementi, faila vērtības un trūkstoša atribūta apraksts
         let fileInformation: [(chosenAttribute: String, attributeValue: String, unknownAttribute: String)] = [
             ("{titleDescription}", songToBeEdited.titleDescription, "unknown title"),
             ("{albumArtistDescription}", songToBeEdited.albumArtistDescription, "unknown album artist"),
@@ -33,10 +34,10 @@ class SongNameFormatter {
             ("{commentDescription}", songToBeEdited.commentDescription, "unknown comment")
         ]
 
+        // izveido formatStyle mainīgo, kas satur lietotāja izvēlēto formātu
         var formatStyle = chosenFormatStyle?.chosenStyle
 
-        // fileInformation.forEach { attribute  in
-        // formatString = formatString.replacingOccurrences(of: attribute.chosenAttribute, with: attribute.attributeValue) }
+        // aizstāj formāta elementus ar faila atribūtu vērtībām
         formatStyle = formatStyle?.replacingOccurrences(of: "{filename}", with: songToBeEdited.filename)
         formatStyle = formatStyle?.replacingOccurrences(of: "{titleDescription}", with: songToBeEdited.titleDescription)
         formatStyle = formatStyle?.replacingOccurrences(of: "{albumArtistDescription}", with: songToBeEdited.albumArtistDescription)
@@ -49,49 +50,31 @@ class SongNameFormatter {
         formatStyle = formatStyle?.replacingOccurrences(of: "{composerDescription}", with: songToBeEdited.composerDescription)
         formatStyle = formatStyle?.replacingOccurrences(of: "{commentDescription}", with: songToBeEdited.commentDescription)
 
-        // custom format string stylam
+        // "your custom format string" stilam
         if chosenFormatStyle?.chosenTag == 8 {
 
             if chosenFormatStyle?.chosenStyle == "" {
-                print("Custom format string has not been made!")
-                // break
+                print("A custom format string has not been created!")
+                return
             }
 
             // ja ir izvēlēts, lai dziesmas, kurām nav kāds no izvēlētajiem atribūtiem, nemaina filename nosaukumu
-            if chosenStyle?.tagReplacement == "unchanged filename" && formatStyle?.range(of: "unknown") != nil {
+            if chosenStyle?.tagReplacement == "{unchanged filename}" && formatStyle?.range(of: "{unknown %tag%}") != nil {
                 print("\"\(songToBeEdited.filename)\" will not be changed")
             } else {
                 songToBeEdited.filename = formatStyle!
             }
-            // ja ir izvēlēts unknown %tag% vietā atstāt tukšu
-            if chosenStyle?.tagReplacement == "empty" {
+            // ja ir izvēlēts "unknown %tag%" vietā atstāt tukšu
+            if chosenStyle?.tagReplacement == "{empty}" {
                 fileInformation.forEach { attribute  in
                     songToBeEdited.filename = songToBeEdited.filename.replacingOccurrences(of: attribute.unknownAttribute, with: "")
                 }
             }
             // ja ir izvēlēts custom tag replacement
-            if chosenStyle?.tagReplacement != "empty" && chosenStyle?.tagReplacement != "unchanged filename" && chosenStyle?.tagReplacement != "unknown" && chosenStyle?.tagReplacement != "" && chosenStyle?.tagReplacement != nil {
+            if chosenStyle?.tagReplacement != "{empty}" && chosenStyle?.tagReplacement != "{unchanged filename}" && chosenStyle?.tagReplacement != "{unknown %tag%}" && chosenStyle?.tagReplacement != "" && chosenStyle?.tagReplacement != nil {
                 fileInformation.forEach { attribute  in
                     songToBeEdited.filename = songToBeEdited.filename.replacingOccurrences(of: attribute.unknownAttribute, with: (chosenStyle?.tagReplacement)!)
                 }
-            }
-            // ja fails ir bez atribūtiem, tad " - - - - - " vietā ieliek "unknown filename"
-            for attributeCount in 1...10 {
-                let onlySeparations = String(repeating: " \(chosenStyle!.separationText) ", count: attributeCount)
-                if songToBeEdited.filename == onlySeparations {
-                    songToBeEdited.filename = "unknown filename"
-                    // vienīgi teorētiski, ja tie ir filename, tad nevar būt vienādi failu nosaukumi.
-                }
-                // ja fails ir bez atribūtiem, bet to vietā ir kkāds replacement, tad "unknown title - unknown album - unknown track" vietā ieliek ieliek "unknown filename"
-                if chosenStyle?.tagReplacement != " " || chosenStyle?.tagReplacement != "" || chosenStyle?.tagReplacement != nil {
-                    var onlyReplacement = "\((chosenStyle?.tagReplacement))"
-                    let repeatingString = " \(chosenStyle!.separationText) \((chosenStyle?.tagReplacement))"
-                    for _ in 1..<10 {
-                        if songToBeEdited.filename == onlyReplacement {
-                            songToBeEdited.filename = "unknown filename"
-                        }
-                        onlyReplacement = onlyReplacement + repeatingString
-                    } }
             }
             // ja ir izlaidies kāds atribūts un ir vairāki separationi
             var nearbySeparations = "\(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)  \(chosenStyle!.separationText)"
@@ -112,6 +95,7 @@ class SongNameFormatter {
                 songToBeEdited.filename = String(songToBeEdited.filename.dropLast(redundantSuffix))
             }
         } else {
+            // ja netika izvēlēts custom format stils
             songToBeEdited.filename = formatStyle!
         }
     }

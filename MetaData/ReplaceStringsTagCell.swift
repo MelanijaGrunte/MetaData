@@ -13,8 +13,7 @@ class ReplaceStringsTagCell: UICollectionViewCell {
     @IBOutlet weak var tagLabel: UILabel!
     @IBOutlet weak var checkbox: UIImageView!
     
-    var array: Array = [String]()
-    
+    // piešķir attēla objektam neieķeksētas kastītes attēlu
     override func awakeFromNib() {
         checkbox.image = UIImage(named: "unchecked")
     }

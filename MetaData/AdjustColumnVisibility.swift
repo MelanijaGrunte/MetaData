@@ -15,7 +15,8 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var adjustColumnVisibilityTableView: UITableView!
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
     @IBOutlet weak var tableViewWidth: NSLayoutConstraint!
-    
+
+    // piešķir vērtības kolonnas atribūtu tipiem to ērtai lasīšanai
     enum ColumnCase: String {
         case filename = "Filename"
         case title = "Title"
@@ -29,7 +30,8 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
         case comment = "Comment"
         case albumArtist = "Album artist"
     }
-    
+
+    // piešķir atribūtu vērtības kolonnas atribūtu tipiem vēlākai nolasīšanai klasē SongTableViewController
     func columnChoice(for type: ColumnCase) -> String {
         switch type {
         case .filename:
@@ -56,7 +58,8 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
             return "albumArtist"
         }
     }
-    
+
+    // izveido kolonnas atribūtu tipu vērtības
     let columns: [ColumnCase] = [
         .filename,
         .title,
@@ -70,20 +73,21 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
         .comment,
         .albumArtist
     ]
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.popViewController(animated: true)
+        // ielādē tabulas datus, piefiksē to izmaiņas, noapaļo stūrus
         adjustColumnVisibilityTableView.dataSource = self
         adjustColumnVisibilityTableView.delegate = self
         adjustColumnVisibilityTableView.layer.cornerRadius = 10
-        adjustColumnVisibilityTableView.layer.masksToBounds = true
     }
-    
+
+    // izveido tik šūnas tabulā, cik ir kolonnu atribūti
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return columns.count;
     }
 
+    // pielāgo rindu augstumu atkarībā no ierīces ekrāna augstuma
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if UIScreen.main.bounds.size.height == 568 { // iPhone SE
             return 35
@@ -92,20 +96,23 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
         }
     }
 
-    
+    // funkcija, kas izpildās lietotājam pieskaroties kādai no rindām
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // izveido mainīgo ar izvēlētās rindas vērtību
         let type = columns[indexPath.row]
         let realm = try! Realm()
         let column = realm.objects(Column.self)
         try! realm.write {
+            // saglabā Realm datubāzē izvēlēto atribūtu
             column.setValue(columnChoice(for: type), forKeyPath: "choice")
         }
         tableView.reloadData()
+        // izslēdz modāli atvērto skatu
         dismiss(animated: true, completion: nil)
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // pielāgo tabulas skata augstumu un platumu atkarībā no ierīces ekrāna augstuma
         if UIScreen.main.bounds.size.height == 568 { // iPhone SE
             tableViewHeight.constant = 385
             tableViewWidth.constant = 200
@@ -113,16 +120,19 @@ class AdjustColumnVisibility: UIViewController, UITableViewDelegate, UITableView
             tableViewHeight.constant = 440
             tableViewWidth.constant = 250
         }
-
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
 
+        // lai līnijas starp rindām būtu no malas līdz malai
         cell.preservesSuperviewLayoutMargins = false
         cell.separatorInset = UIEdgeInsets.zero
         cell.layoutMargins = UIEdgeInsets.zero
         // seperator ir pilna garuma
 
+        // pievieno šūnu uzrakstiem atribūtu nosaukumus
         cell.textLabel?.text = columns[indexPath.row].rawValue
+        // centrē šūnu uzrakstus
         cell.textLabel?.textAlignment = .center
+        // pielāgo šūnu teksta izmēru atkarībā no ierīces ekrāna augstuma
         if UIScreen.main.bounds.size.height == 568 { // iPhone SE
             cell.textLabel?.font = cell.textLabel?.font.withSize(15)
         } else {

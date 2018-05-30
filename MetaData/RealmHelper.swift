@@ -13,6 +13,8 @@ class RealmHelper {
     static func configureDefaultValues() {
         let realm = try! Realm()
 
+        // ja kādā no Realm datubāzes objektiem nav vērtības, tiek uzstādītas noklusētās vērtības
+
         let attributeObjects = realm.objects(Attribute.self)
         if attributeObjects.isEmpty {
             let attribute = Attribute()
@@ -32,9 +34,9 @@ class RealmHelper {
         let customFormatStringStyleObjects = realm.objects(CustomFormatStringStyle.self)
         if customFormatStringStyleObjects.isEmpty {
             let customFormatStringStyle = CustomFormatStringStyle()
-            customFormatStringStyle.stringStyle = "unknown"
-            customFormatStringStyle.tagReplacement = ""
-            customFormatStringStyle.separationText = " "
+            customFormatStringStyle.stringStyle = ""
+            customFormatStringStyle.tagReplacement = "{unknown %tag%}"
+            customFormatStringStyle.separationText = "-"
             try! realm.write {
                 realm.add(customFormatStringStyle)
             }

@@ -14,7 +14,8 @@ class CustomFormatStringTagCell: UICollectionViewCell {
     @IBOutlet weak var checkbox: UIImageView!
     
     var cellValue: String = ""
-    
+
+    // piešķir attēla objektam tukšas kastītes attēlu
     override func awakeFromNib() {
         checkbox.image = UIImage(named: "empty")
     }

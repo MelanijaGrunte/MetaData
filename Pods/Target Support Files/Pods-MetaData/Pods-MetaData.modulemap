@@ -1,0 +1,6 @@
+framework module Pods_MetaData {
+  umbrella header "Pods-MetaData-umbrella.h"
+
+  export *
+  module * { export * }
+}
